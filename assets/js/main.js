@@ -29,6 +29,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         animatedElements.forEach((element) => revealObserver.observe(element));
+
+        // Fallback: if for any reason an element in viewport wasn't revealed (e.g., observer glitch),
+        // force reveal once after load and on first scroll.
+        const forceRevealInView = () => {
+            animatedElements.forEach((el) => {
+                if (el.classList.contains('is-visible')) return;
+                const rect = el.getBoundingClientRect();
+                const inView = rect.top < (window.innerHeight * 0.98) && rect.bottom > 0;
+                if (inView) el.classList.add('is-visible');
+            });
+        };
+        window.addEventListener('load', () => setTimeout(forceRevealInView, 400), { once: true });
+        window.addEventListener('scroll', forceRevealInView, { passive: true, once: true });
     } else {
         animatedElements.forEach((element) => element.classList.add('is-visible'));
     }
@@ -251,5 +264,49 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         body.classList.add('is-loaded');
+    }
+
+    // Contact form: route to WhatsApp or Email
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = (document.getElementById('cf-name')?.value || '').trim();
+            const email = (document.getElementById('cf-email')?.value || '').trim();
+            const subject = (document.getElementById('cf-subject')?.value || '').trim();
+            const message = (document.getElementById('cf-message')?.value || '').trim();
+            const route = (document.getElementById('cf-route')?.value || 'whatsapp');
+
+            if (!name || !message) {
+                alert('Please provide your name and a message.');
+                return;
+            }
+
+            if (route === 'email') {
+                if (!email) {
+                    alert('Please enter your email so I can reply.');
+                    return;
+                }
+                const mailTo = 'mailto:sasuisaac332@gmail.com'
+                    + '?subject=' + encodeURIComponent(subject || 'New message from portfolio')
+                    + '&body=' + encodeURIComponent(
+                        `Name: ${name}\nEmail: ${email}`
+                        + (subject ? `\nSubject: ${subject}` : '')
+                        + `\n\n${message}`
+                    );
+                window.location.href = mailTo;
+            } else {
+                const lines = [
+                    'New message from portfolio',
+                    `Name: ${name}`,
+                    email ? `Email: ${email}` : null,
+                    subject ? `Subject: ${subject}` : null,
+                    '',
+                    message
+                ].filter(Boolean);
+                const wa = 'https://wa.me/233201142183?text=' + encodeURIComponent(lines.join('\n'));
+                window.open(wa, '_blank');
+            }
+        });
     }
 });
