@@ -4,7 +4,7 @@ Sends form submissions to Telegram bot.
 """
 import os
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 
@@ -16,6 +16,10 @@ CORS(app)  # Allow cross-origin requests from frontend
 # Telegram configuration from environment
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+
+# Base paths to serve the frontend from the same backend
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
 
 
 def send_telegram_message(message: str) -> bool:
@@ -38,6 +42,18 @@ def send_telegram_message(message: str) -> bool:
     except requests.RequestException as e:
         print(f"❌ Telegram send failed: {e}")
         return False
+
+
+@app.route('/', methods=['GET'])
+def index():
+    """Serve the main portfolio page."""
+    return send_from_directory(BASE_DIR, 'index.html')
+
+
+@app.route('/assets/<path:filename>')
+def assets(filename: str):
+    """Serve static assets (CSS, JS, images)."""
+    return send_from_directory(ASSETS_DIR, filename)
 
 
 @app.route('/api/contact', methods=['POST'])
@@ -86,4 +102,4 @@ def health():
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run( port=5006, debug=debug)

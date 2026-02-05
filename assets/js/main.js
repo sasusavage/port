@@ -273,7 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Contact form: send to backend API (Telegram)
     const contactForm = document.getElementById('contact-form');
-    const BACKEND_URL = 'https://sasulabs.me'; // Update this with your deployed backend URL
+    // Use relative URL so frontend and backend work together on the same domain
+    const BACKEND_URL = '';
 
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
