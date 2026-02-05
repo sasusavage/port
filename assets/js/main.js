@@ -106,11 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openMobileNav = () => {
         if (!header) return;
+        // Prevent scroll jump
+        const scrollY = window.scrollY;
         header.classList.add('expanded');
-        if (main) main.classList.add('expanded');
         document.body.classList.add('mobile-nav-active');
         overlay.classList.add('is-active');
         if (mobileNavToggle) setAriaExpanded(mobileNavToggle, true);
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
 
         // Focus trap
         const focusables = getFocusable(header);
@@ -136,10 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMobileNav = () => {
         if (!header) return;
         header.classList.remove('expanded');
-        if (main) main.classList.remove('expanded');
         document.body.classList.remove('mobile-nav-active');
         overlay.classList.remove('is-active');
-        if (mobileNavToggle) setAriaExpanded(mobileNavToggle, false);
+        if (mobileNavToggle) {
+            setAriaExpanded(mobileNavToggle, false);
+            mobileNavToggle.focus({ preventScroll: true });
+        }
         if (header._trapHandler) {
             header.removeEventListener('keydown', header._trapHandler);
             header._trapHandler = null;
@@ -266,23 +271,59 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('is-loaded');
     }
 
-    // Contact form: route to WhatsApp or Email
+    // Contact form: send to backend API (Telegram) with fallback to WhatsApp/Email
     const contactForm = document.getElementById('contact-form');
+    const BACKEND_URL = 'https://your-backend-url.com'; // Update this with your deployed backend URL
+
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn?.textContent || 'Send';
+            
             const name = (document.getElementById('cf-name')?.value || '').trim();
             const email = (document.getElementById('cf-email')?.value || '').trim();
             const subject = (document.getElementById('cf-subject')?.value || '').trim();
             const message = (document.getElementById('cf-message')?.value || '').trim();
-            const route = (document.getElementById('cf-route')?.value || 'whatsapp');
+            const route = (document.getElementById('cf-route')?.value || 'telegram');
 
             if (!name || !message) {
                 alert('Please provide your name and a message.');
                 return;
             }
 
-            if (route === 'email') {
+            // Try sending to backend (Telegram) first
+            if (route === 'telegram') {
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+                }
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/contact`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, subject, message })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('✅ Message sent successfully! I\'ll get back to you soon.');
+                        contactForm.reset();
+                    } else {
+                        alert('❌ ' + (result.error || 'Failed to send. Please try again.'));
+                    }
+                } catch (err) {
+                    console.error('Contact form error:', err);
+                    alert('❌ Network error. Please try WhatsApp or Email instead.');
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                }
+            } else if (route === 'email') {
                 if (!email) {
                     alert('Please enter your email so I can reply.');
                     return;
@@ -296,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     );
                 window.location.href = mailTo;
             } else {
+                // WhatsApp fallback
                 const lines = [
                     'New message from portfolio',
                     `Name: ${name}`,
