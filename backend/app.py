@@ -8,7 +8,13 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-load_dotenv()
+# Base paths to serve the frontend from the same backend
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
+
+# Load environment variables from a .env file in the backend directory
+ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+load_dotenv(ENV_PATH)
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests from frontend
@@ -16,10 +22,6 @@ CORS(app)  # Allow cross-origin requests from frontend
 # Telegram configuration from environment
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-
-# Base paths to serve the frontend from the same backend
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
 
 
 def send_telegram_message(message: str) -> bool:
@@ -100,6 +102,6 @@ def health():
 
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 5006))
     debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
     app.run( port=5006, debug=debug)

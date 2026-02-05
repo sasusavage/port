@@ -10,6 +10,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const preloader = document.getElementById('preloader');
     const body = document.body;
     const typedElement = document.querySelector('.typed');
+    const toastRoot = document.getElementById('toast-root');
+
+    const showToast = (message, type = 'info') => {
+        const container = toastRoot || document.body;
+        const toast = document.createElement('div');
+        toast.className = `toast toast--${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+
+        // Trigger enter animation
+        requestAnimationFrame(() => {
+            toast.classList.add('is-visible');
+        });
+
+        const remove = () => {
+            toast.remove();
+        };
+
+        window.setTimeout(() => {
+            toast.classList.remove('is-visible');
+            toast.addEventListener('transitionend', remove, { once: true });
+        }, 3500);
+    };
 
     if (year) {
         year.textContent = new Date().getFullYear();
@@ -289,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const message = (document.getElementById('cf-message')?.value || '').trim();
 
             if (!name || !message) {
-                alert('Please provide your name and a message.');
+                showToast('Please provide your name and a message.', 'error');
                 return;
             }
 
@@ -308,14 +331,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('✅ Message sent successfully! I will get back to you soon.');
+                    showToast('Message sent successfully! I will get back to you soon.', 'success');
                     contactForm.reset();
                 } else {
-                    alert('❌ ' + (result.error || 'Failed to send. Please try again.'));
+                    showToast(result.error || 'Failed to send. Please try again.', 'error');
                 }
             } catch (err) {
                 console.error('Contact form error:', err);
-                alert('❌ Network error. Please try again later.');
+                showToast('Network error. Please try again later.', 'error');
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
