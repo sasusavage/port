@@ -50,6 +50,7 @@ def contact():
 
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
+    phone = data.get('phone', '').strip()
     subject = data.get('subject', '').strip()
     message = data.get('message', '').strip()
 
@@ -62,6 +63,7 @@ def contact():
         "📬 <b>New Portfolio Contact</b>\n\n"
         f"<b>Name:</b> {name}\n"
         f"<b>Email:</b> {email or 'Not provided'}\n"
+        f"<b>Phone:</b> {phone or 'Not provided'}\n"
         f"<b>Subject:</b> {subject or 'No subject'}\n\n"
         f"<b>Message:</b>\n{message}"
     )

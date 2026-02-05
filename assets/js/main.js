@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('is-loaded');
     }
 
-    // Contact form: send to backend API (Telegram) with fallback to WhatsApp/Email
+    // Contact form: send to backend API (Telegram)
     const contactForm = document.getElementById('contact-form');
     const BACKEND_URL = 'https://your-backend-url.com'; // Update this with your deployed backend URL
 
@@ -279,75 +279,47 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn?.textContent || 'Send';
+            const originalText = submitBtn?.textContent || 'Send Message';
             
             const name = (document.getElementById('cf-name')?.value || '').trim();
             const email = (document.getElementById('cf-email')?.value || '').trim();
+            const phone = (document.getElementById('cf-phone')?.value || '').trim();
             const subject = (document.getElementById('cf-subject')?.value || '').trim();
             const message = (document.getElementById('cf-message')?.value || '').trim();
-            const route = (document.getElementById('cf-route')?.value || 'telegram');
 
             if (!name || !message) {
                 alert('Please provide your name and a message.');
                 return;
             }
 
-            // Try sending to backend (Telegram) first
-            if (route === 'telegram') {
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/contact`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, subject, message })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Message sent successfully! I will get back to you soon.');
+                    contactForm.reset();
+                } else {
+                    alert('❌ ' + (result.error || 'Failed to send. Please try again.'));
+                }
+            } catch (err) {
+                console.error('Contact form error:', err);
+                alert('❌ Network error. Please try again later.');
+            } finally {
                 if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Sending...';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                 }
-
-                try {
-                    const response = await fetch(`${BACKEND_URL}/api/contact`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email, subject, message })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        alert('✅ Message sent successfully! I\'ll get back to you soon.');
-                        contactForm.reset();
-                    } else {
-                        alert('❌ ' + (result.error || 'Failed to send. Please try again.'));
-                    }
-                } catch (err) {
-                    console.error('Contact form error:', err);
-                    alert('❌ Network error. Please try WhatsApp or Email instead.');
-                } finally {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = originalText;
-                    }
-                }
-            } else if (route === 'email') {
-                if (!email) {
-                    alert('Please enter your email so I can reply.');
-                    return;
-                }
-                const mailTo = 'mailto:sasuisaac332@gmail.com'
-                    + '?subject=' + encodeURIComponent(subject || 'New message from portfolio')
-                    + '&body=' + encodeURIComponent(
-                        `Name: ${name}\nEmail: ${email}`
-                        + (subject ? `\nSubject: ${subject}` : '')
-                        + `\n\n${message}`
-                    );
-                window.location.href = mailTo;
-            } else {
-                // WhatsApp fallback
-                const lines = [
-                    'New message from portfolio',
-                    `Name: ${name}`,
-                    email ? `Email: ${email}` : null,
-                    subject ? `Subject: ${subject}` : null,
-                    '',
-                    message
-                ].filter(Boolean);
-                const wa = 'https://wa.me/233201142183?text=' + encodeURIComponent(lines.join('\n'));
-                window.open(wa, '_blank');
             }
         });
     }

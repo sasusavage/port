@@ -354,7 +354,11 @@
                         </div>
                         <div class="form__group">
                             <label for="cf-email">Your email</label>
-                            <input type="email" id="cf-email" name="email" required placeholder="you@example.com" />
+                            <input type="email" id="cf-email" name="email" placeholder="you@example.com" />
+                        </div>
+                        <div class="form__group">
+                            <label for="cf-phone">Phone number</label>
+                            <input type="tel" id="cf-phone" name="phone" placeholder="+233 XXX XXX XXX" />
                         </div>
                         <div class="form__group">
                             <label for="cf-subject">Subject (optional)</label>
@@ -364,16 +368,8 @@
                             <label for="cf-message">Message</label>
                             <textarea id="cf-message" name="message" rows="5" required placeholder="Tell me about your project or idea…"></textarea>
                         </div>
-                        <div class="form__group">
-                            <label for="cf-route">Send via</label>
-                            <select id="cf-route" name="route">
-                                <option value="telegram">Direct Message</option>
-                                <option value="whatsapp">WhatsApp</option>
-                                <option value="email">Email</option>
-                            </select>
-                        </div>
                         <div class="form__actions">
-                            <button type="submit" class="button button--primary">Send</button>
+                            <button type="submit" class="button button--primary">Send Message</button>
                         </div>
                         <p class="form__note">Your message will be sent directly to me.</p>
                     </form>
