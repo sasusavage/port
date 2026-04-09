@@ -58,6 +58,18 @@ def assets(filename: str):
     return send_from_directory(ASSETS_DIR, filename)
 
 
+@app.route('/sitemap.xml')
+def sitemap():
+    """Serve the XML sitemap for search engine crawlers."""
+    return send_from_directory(BASE_DIR, 'sitemap.xml', mimetype='application/xml')
+
+
+@app.route('/robots.txt')
+def robots():
+    """Serve robots.txt for search engine crawlers."""
+    return send_from_directory(BASE_DIR, 'robots.txt', mimetype='text/plain')
+
+
 @app.route('/api/contact', methods=['POST'])
 def contact():
     """Handle contact form submissions."""
