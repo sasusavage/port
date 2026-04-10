@@ -194,11 +194,15 @@
       <p>Sasu Isaac Osafo — Dashboard</p>
     </div>
     <div class="field">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="sasusavage" autocomplete="username" />
+    </div>
+    <div class="field">
       <label>Password</label>
-      <input type="password" id="login-pass" placeholder="Enter admin password" />
+      <input type="password" id="login-pass" placeholder="••••••••••" autocomplete="current-password" />
     </div>
     <button class="btn btn--primary" id="login-btn">Sign in</button>
-    <p id="login-error" style="color:var(--danger);font-size:.85rem;display:none;">Wrong password. Try again.</p>
+    <p id="login-error" style="color:var(--danger);font-size:.85rem;display:none;">Invalid username or password.</p>
   </div>
 </div>
 
@@ -302,18 +306,21 @@ function toast(msg, type = 'success') {
 }
 
 // ── Auth ───────────────────────────────────────────────────
-document.getElementById('login-pass').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('login-btn').click();
+['login-user', 'login-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-btn').click();
+  });
 });
 
 document.getElementById('login-btn').addEventListener('click', async () => {
-  const pass = document.getElementById('login-pass').value;
-  const btn = document.getElementById('login-btn');
+  const username = document.getElementById('login-user').value.trim();
+  const pass     = document.getElementById('login-pass').value;
+  const btn      = document.getElementById('login-btn');
   btn.textContent = 'Signing in…'; btn.disabled = true;
   try {
     const r = await fetch(`${API}/api/admin/login`, {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ password: pass }), credentials: 'include'
+      body: JSON.stringify({ username, password: pass }), credentials: 'include'
     });
     const d = await r.json();
     if (d.success) {

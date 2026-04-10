@@ -4,28 +4,32 @@ Flask backend for portfolio — contact form + CMS admin.
 import os
 import uuid
 import requests
-from flask import Flask, request, jsonify, send_from_directory, session, redirect, url_for
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
 from dotenv import load_dotenv
-from backend.database import init_db, get_all_projects, get_project, create_project, update_project, delete_project, reorder_projects
+from backend.database import (
+    init_db, get_all_projects, get_project, create_project,
+    update_project, delete_project, reorder_projects, verify_admin
+)
 
-# Base paths
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
-UPLOADS_DIR = os.path.join(ASSETS_DIR, 'images', 'uploads')
-
-# Load .env
+# Load .env first so os.getenv calls below pick up the values
 ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
 load_dotenv(ENV_PATH)
+
+# Base paths
+BASE_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
+
+# Upload directory: set UPLOAD_DIR in env to your Coolify persistent storage
+# mount path (e.g. /data/uploads). Falls back to assets/images/uploads locally.
+UPLOADS_DIR = os.getenv('UPLOAD_DIR', os.path.join(ASSETS_DIR, 'images', 'uploads'))
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', os.urandom(24).hex())
 CORS(app)
 
-# Config
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID   = os.getenv('TELEGRAM_CHAT_ID')
-ADMIN_PASSWORD     = os.getenv('ADMIN_PASSWORD', 'changeme')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 os.makedirs(UPLOADS_DIR, exist_ok=True)
@@ -74,6 +78,11 @@ def index():
 def assets(filename):
     return send_from_directory(ASSETS_DIR, filename)
 
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    """Serve uploaded images from persistent storage."""
+    return send_from_directory(UPLOADS_DIR, filename)
+
 @app.route('/sitemap.xml')
 def sitemap():
     return send_from_directory(BASE_DIR, 'sitemap.xml', mimetype='application/xml')
@@ -105,10 +114,13 @@ def health():
 @app.route('/api/admin/login', methods=['POST'])
 def admin_login():
     data = request.get_json() or {}
-    if data.get('password') == ADMIN_PASSWORD:
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+    if username and verify_admin(username, password):
         session['admin'] = True
+        session['username'] = username
         return jsonify({'success': True})
-    return jsonify({'success': False, 'error': 'Wrong password'}), 401
+    return jsonify({'success': False, 'error': 'Invalid username or password'}), 401
 
 @app.route('/api/admin/logout', methods=['POST'])
 def admin_logout():
@@ -192,7 +204,7 @@ def admin_upload():
     ext = file.filename.rsplit('.', 1)[1].lower()
     filename = f"{uuid.uuid4().hex}.{ext}"
     file.save(os.path.join(UPLOADS_DIR, filename))
-    return jsonify({'url': f'/assets/images/uploads/{filename}'})
+    return jsonify({'url': f'/uploads/{filename}'})
 
 
 # ── Contact form ──────────────────────────────────────────────────────────────
