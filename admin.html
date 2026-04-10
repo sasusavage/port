@@ -6,297 +6,338 @@
 <title>Portfolio Admin — Sasu Isaac Osafo</title>
 <meta name="robots" content="noindex, nofollow">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f172a; --surface: #1e293b; --surface2: #263349;
+  --border: rgba(255,255,255,0.08); --accent: #3b7eff;
+  --accent-soft: rgba(59,126,255,0.15); --accent-strong: rgba(59,126,255,0.35);
+  --text: #f1f5f9; --muted: #94a3b8; --danger: #ef4444;
+  --danger-soft: rgba(239,68,68,0.12); --success: #22c55e; --radius: 12px;
+}
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  :root {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface2: #263349;
-    --border: rgba(255,255,255,0.08);
-    --accent: #3b7eff;
-    --accent-soft: rgba(59,126,255,0.15);
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --danger: #ef4444;
-    --danger-soft: rgba(239,68,68,0.12);
-    --success: #22c55e;
-    --radius: 12px;
-  }
+/* LOGIN */
+#login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 1.25rem; }
+.login-card h1 { font-size: 1.3rem; font-weight: 700; }
+.login-card p  { color: var(--muted); font-size: 0.88rem; }
 
-  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+/* APP SHELL */
+#app { display: none; flex-direction: column; min-height: 100vh; }
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+.topbar__brand { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 0.6rem; }
+.topbar__brand span { color: var(--accent); }
 
-  /* ── LOGIN ── */
-  #login-screen {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh;
-  }
-  .login-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 380px;
-    display: flex; flex-direction: column; gap: 1.25rem;
-  }
-  .login-card h1 { font-size: 1.3rem; font-weight: 700; }
-  .login-card p  { color: var(--muted); font-size: 0.88rem; }
+/* TABS */
+.tabs-bar { display: flex; gap: 0.25rem; padding: 1rem 2rem 0; border-bottom: 1px solid var(--border); background: var(--surface); overflow-x: auto; }
+.tab-btn { background: none; border: none; color: var(--muted); font-size: 0.875rem; font-weight: 500; padding: 0.6rem 1rem; border-radius: 8px 8px 0 0; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 150ms, border-color 150ms; }
+.tab-btn.is-active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-btn:hover:not(.is-active) { color: var(--text); }
 
-  /* ── LAYOUT ── */
-  #app { display: none; flex-direction: column; min-height: 100vh; }
+.main { padding: 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+.tab-panel { display: none; }
+.tab-panel.is-active { display: block; }
 
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 2rem; background: var(--surface);
-    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10;
-  }
-  .topbar__brand { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 0.6rem; }
-  .topbar__brand span { color: var(--accent); }
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: all 150ms; text-decoration: none; font-family: inherit; }
+.btn--primary { background: var(--accent); color: #fff; }
+.btn--primary:hover { background: #2563eb; }
+.btn--ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn--ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.btn--danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+.btn--danger:hover { background: var(--danger); color: #fff; }
+.btn--sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+.btn--full { width: 100%; justify-content: center; }
 
-  .main { padding: 2rem; max-width: 1100px; margin: 0 auto; width: 100%; }
+/* FIELDS */
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.field label { font-size: 0.82rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.field input, .field textarea, .field select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 0.9rem; color: var(--text); font-size: 0.9rem; font-family: inherit; transition: border-color 150ms; outline: none; width: 100%; }
+.field input:focus, .field textarea:focus { border-color: var(--accent); }
+.field textarea { resize: vertical; min-height: 80px; }
+.hint { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
 
-  /* ── BUTTONS ── */
-  .btn {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.55rem 1.1rem; border-radius: 8px; font-size: 0.875rem;
-    font-weight: 500; cursor: pointer; border: none; transition: all 150ms;
-    text-decoration: none;
-  }
-  .btn--primary { background: var(--accent); color: #fff; }
-  .btn--primary:hover { background: #2563eb; }
-  .btn--ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn--ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-  .btn--danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
-  .btn--danger:hover { background: var(--danger); color: #fff; }
-  .btn--sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+/* FORM GRID */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-grid .span2 { grid-column: 1 / -1; }
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-grid .span2 { grid-column: 1; } }
 
-  /* ── FORM FIELDS ── */
-  .field { display: flex; flex-direction: column; gap: 0.4rem; }
-  .field label { font-size: 0.82rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-  .field input, .field textarea, .field select {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 8px; padding: 0.65rem 0.9rem;
-    color: var(--text); font-size: 0.9rem; font-family: inherit;
-    transition: border-color 150ms; outline: none; width: 100%;
-  }
-  .field input:focus, .field textarea:focus { border-color: var(--accent); }
-  .field textarea { resize: vertical; min-height: 80px; }
-  .tags-input { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
-    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.5rem 0.75rem; min-height: 42px; cursor: text; }
-  .tags-input:focus-within { border-color: var(--accent); }
-  .tag-pill {
-    display: inline-flex; align-items: center; gap: 0.3rem;
-    background: var(--accent-soft); border: 1px solid rgba(59,126,255,0.3);
-    color: #93c5fd; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.78rem;
-  }
-  .tag-pill button { background: none; border: none; color: inherit; cursor: pointer; font-size: 0.9rem; line-height: 1; padding: 0; }
-  .tags-input input[type="text"] {
-    border: none; background: transparent; outline: none;
-    color: var(--text); font-size: 0.875rem; min-width: 80px; flex: 1; padding: 0;
-  }
+/* SECTION CARD */
+.section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem; margin-bottom: 1.25rem; }
+.section-card__header { display: flex; align-items: center; justify-content: space-between; }
+.section-card__title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.section-save-row { display: flex; justify-content: flex-end; padding-top: 0.5rem; border-top: 1px solid var(--border); }
 
-  /* ── PROJECTS GRID ── */
-  .section-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
-  .section-header h2 { font-size: 1.1rem; font-weight: 600; }
+/* REPEATER */
+.repeater { display: flex; flex-direction: column; gap: 0.75rem; }
+.repeater-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; position: relative; }
+.repeater-item__remove { position: absolute; top: 0.6rem; right: 0.6rem; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; line-height: 1; }
+.repeater-item__remove:hover { color: var(--danger); }
+.repeater-add { margin-top: 0.25rem; }
 
-  .projects-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.25rem;
-  }
+/* TAGS */
+.tags-input { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; min-height: 42px; cursor: text; }
+.tags-input:focus-within { border-color: var(--accent); }
+.tag-pill { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--accent-soft); border: 1px solid var(--accent-strong); color: #93c5fd; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.78rem; }
+.tag-pill button { background: none; border: none; color: inherit; cursor: pointer; font-size: 0.9rem; line-height: 1; padding: 0; }
+.tags-input input[type="text"] { border: none; background: transparent; outline: none; color: var(--text); font-size: 0.875rem; min-width: 80px; flex: 1; padding: 0; font-family: inherit; }
 
-  .project-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
-    display: flex; flex-direction: column;
-    transition: border-color 200ms;
-  }
-  .project-card:hover { border-color: rgba(59,126,255,0.3); }
+/* PROJECTS */
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+.project-card__thumb { width: 100%; height: 160px; object-fit: cover; background: var(--surface2); }
+.project-card__thumb--placeholder { width: 100%; height: 160px; background: var(--surface2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 2rem; }
+.project-card__body { padding: 0.9rem 1rem; flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
+.project-card__title { font-weight: 600; font-size: 0.9rem; }
+.project-card__desc { font-size: 0.8rem; color: var(--muted); flex: 1; }
+.project-card__tags { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.project-card__tag { font-size: 0.68rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 999px; background: var(--accent-soft); color: #93c5fd; border: 1px solid var(--accent-strong); }
+.project-card__actions { display: flex; gap: 0.5rem; padding: 0.65rem 1rem; border-top: 1px solid var(--border); }
 
-  .project-card__thumb {
-    width: 100%; height: 180px; object-fit: cover;
-    background: var(--surface2);
-  }
-  .project-card__thumb--placeholder {
-    width: 100%; height: 180px; background: var(--surface2);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--muted); font-size: 2rem;
-  }
+/* UPLOAD */
+.upload-area { border: 2px dashed var(--border); border-radius: var(--radius); padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 200ms, background 200ms; color: var(--muted); font-size: 0.875rem; }
+.upload-area:hover, .upload-area.drag-over { border-color: var(--accent); background: var(--accent-soft); }
+.upload-area input[type="file"] { display: none; }
+.upload-preview { max-width: 100%; max-height: 140px; border-radius: 8px; margin-top: 0.75rem; display: none; }
 
-  .project-card__body { padding: 1rem 1.1rem; flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
-  .project-card__title { font-weight: 600; font-size: 0.95rem; }
-  .project-card__desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; flex: 1; }
-  .project-card__tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
-  .project-card__tag {
-    font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem;
-    border-radius: 999px; background: var(--accent-soft);
-    color: #93c5fd; border: 1px solid rgba(59,126,255,0.25);
-  }
-  .project-card__actions { display: flex; gap: 0.5rem; padding: 0.75rem 1.1rem; border-top: 1px solid var(--border); }
+/* MODAL */
+.modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+.modal-backdrop.is-open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; gap: 1.1rem; }
+.modal__header { display: flex; align-items: center; justify-content: space-between; }
+.modal__header h3 { font-size: 1.05rem; font-weight: 700; }
+.modal__close { background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
+.modal__close:hover { color: var(--text); }
+.modal__footer { display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 0.5rem; }
 
-  /* ── MODAL ── */
-  .modal-backdrop {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-    z-index: 100; align-items: center; justify-content: center; padding: 1rem;
-  }
-  .modal-backdrop.is-open { display: flex; }
-  .modal {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 20px; padding: 2rem; width: 100%; max-width: 560px;
-    max-height: 90vh; overflow-y: auto;
-    display: flex; flex-direction: column; gap: 1.25rem;
-  }
-  .modal__header { display: flex; align-items: center; justify-content: space-between; }
-  .modal__header h3 { font-size: 1.1rem; font-weight: 700; }
-  .modal__close { background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; line-height: 1; }
-  .modal__close:hover { color: var(--text); }
-  .modal__footer { display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 0.5rem; }
-
-  /* ── IMAGE UPLOAD ── */
-  .upload-area {
-    border: 2px dashed var(--border); border-radius: var(--radius);
-    padding: 1.5rem; text-align: center; cursor: pointer;
-    transition: border-color 200ms, background 200ms;
-    color: var(--muted); font-size: 0.875rem;
-  }
-  .upload-area:hover, .upload-area.drag-over { border-color: var(--accent); background: var(--accent-soft); }
-  .upload-area input[type="file"] { display: none; }
-  .upload-preview { max-width: 100%; max-height: 160px; border-radius: 8px; margin-top: 0.75rem; display: none; }
-
-  /* ── TOAST ── */
-  .toast-stack { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 999; }
-  .toast {
-    padding: 0.75rem 1.2rem; border-radius: 10px; font-size: 0.875rem; font-weight: 500;
-    min-width: 220px; max-width: 340px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    animation: slideIn 200ms ease;
-  }
-  .toast--success { background: #166534; color: #bbf7d0; border: 1px solid #16a34a; }
-  .toast--error   { background: #7f1d1d; color: #fecaca; border: 1px solid #dc2626; }
-  @keyframes slideIn { from { opacity:0; transform: translateX(16px); } to { opacity:1; transform: translateX(0); } }
-
-  /* ── EMPTY STATE ── */
-  .empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
-  .empty p { margin-top: 0.5rem; font-size: 0.9rem; }
-
-  /* ── SPINNER ── */
-  .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-state { display: flex; align-items: center; justify-content: center; padding: 3rem; gap: 0.75rem; color: var(--muted); }
+/* MISC */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.section-header h2 { font-size: 1.05rem; font-weight: 600; }
+.empty { text-align: center; padding: 3rem 2rem; color: var(--muted); }
+.loading-state { display: flex; align-items: center; justify-content: center; padding: 3rem; gap: 0.75rem; color: var(--muted); }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.toast-stack { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 999; }
+.toast { padding: 0.75rem 1.2rem; border-radius: 10px; font-size: 0.875rem; font-weight: 500; min-width: 220px; max-width: 340px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); animation: slideIn 200ms ease; }
+.toast--success { background: #166534; color: #bbf7d0; border: 1px solid #16a34a; }
+.toast--error   { background: #7f1d1d; color: #fecaca; border: 1px solid #dc2626; }
+@keyframes slideIn { from { opacity:0; transform: translateX(16px); } to { opacity:1; transform: translateX(0); } }
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--accent-soft); color: #93c5fd; border: 1px solid var(--accent-strong); }
 </style>
 </head>
 <body>
 
-<!-- ── LOGIN ─────────────────────────────────────────────── -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <div>
-      <h1>Portfolio Admin</h1>
-      <p>Sasu Isaac Osafo — Dashboard</p>
-    </div>
-    <div class="field">
-      <label>Username</label>
-      <input type="text" id="login-user" placeholder="Username" autocomplete="username" />
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="••••••••••" autocomplete="current-password" />
-    </div>
-    <button class="btn btn--primary" id="login-btn">Sign in</button>
+    <div><h1>Portfolio Admin</h1><p>Sasu Isaac Osafo — Dashboard</p></div>
+    <div class="field"><label>Username</label><input type="text" id="login-user" placeholder="Username" autocomplete="username" /></div>
+    <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••••" autocomplete="current-password" /></div>
+    <button class="btn btn--primary btn--full" id="login-btn">Sign in</button>
     <p id="login-error" style="color:var(--danger);font-size:.85rem;display:none;">Invalid username or password.</p>
   </div>
 </div>
 
-<!-- ── APP ───────────────────────────────────────────────── -->
+<!-- APP -->
 <div id="app">
   <div class="topbar">
-    <div class="topbar__brand">
-      &#9670; Portfolio <span>Admin</span>
-    </div>
+    <div class="topbar__brand">&#9670; Portfolio <span>Admin</span></div>
     <div style="display:flex;gap:.75rem;align-items:center;">
       <a class="btn btn--ghost btn--sm" href="/" target="_blank">View site ↗</a>
       <button class="btn btn--ghost btn--sm" id="logout-btn">Sign out</button>
     </div>
   </div>
 
-  <div class="main">
-    <div class="section-header">
-      <h2>Signature Engagements</h2>
-      <button class="btn btn--primary" id="add-btn">+ Add project</button>
-    </div>
-    <div id="projects-container">
-      <div class="loading-state"><div class="spinner"></div> Loading…</div>
-    </div>
+  <div class="tabs-bar">
+    <button class="tab-btn is-active" data-tab="hero">Hero</button>
+    <button class="tab-btn" data-tab="about">About</button>
+    <button class="tab-btn" data-tab="capabilities">Capabilities</button>
+    <button class="tab-btn" data-tab="resume">Resume</button>
+    <button class="tab-btn" data-tab="testimonials">Testimonials</button>
+    <button class="tab-btn" data-tab="contact">Contact</button>
+    <button class="tab-btn" data-tab="projects">Projects</button>
+    <button class="tab-btn" data-tab="cv">CV</button>
   </div>
-</div>
 
-<!-- ── MODAL ─────────────────────────────────────────────── -->
-<div class="modal-backdrop" id="modal">
+  <div class="main">
+
+    <!-- HERO TAB -->
+    <div class="tab-panel is-active" id="tab-hero">
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Hero Section</span></div>
+        <div class="form-grid">
+          <div class="field span2"><label>Full name</label><input type="text" id="hero-name" /></div>
+          <div class="field span2"><label>Eyebrow text <span class="hint">(small text above title)</span></label><input type="text" id="hero-eyebrow" /></div>
+          <div class="field span2"><label>Main title</label><input type="text" id="hero-title" /></div>
+          <div class="field span2">
+            <label>Typed items <span class="hint">(the rotating words — press Enter or comma to add)</span></label>
+            <div class="tags-input" id="typed-tags-input"><input type="text" id="typed-tags-raw" placeholder="Add item…" /></div>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:.82rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.5rem;">Stats bar</label>
+          <div class="repeater" id="stats-repeater"></div>
+          <button class="btn btn--ghost btn--sm repeater-add" onclick="addStat()">+ Add stat</button>
+        </div>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('hero')">Save hero</button></div>
+      </div>
+    </div>
+
+    <!-- ABOUT TAB -->
+    <div class="tab-panel" id="tab-about">
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">About Section</span></div>
+        <div class="field"><label>Bio paragraph 1</label><textarea id="about-bio-0" rows="4"></textarea></div>
+        <div class="field"><label>Bio paragraph 2</label><textarea id="about-bio-1" rows="4"></textarea></div>
+        <div class="field"><label>Photo URL <span class="hint">(or upload below)</span></label><input type="text" id="about-photo" /></div>
+        <div class="field">
+          <label>Upload new photo</label>
+          <div class="upload-area" id="photo-upload-area">
+            <input type="file" id="photo-file" accept="image/*" />
+            <div id="photo-upload-placeholder">Click to upload photo</div>
+            <img id="photo-preview" class="upload-preview" alt="Preview" />
+          </div>
+        </div>
+        <div class="field"><label>Photo caption</label><input type="text" id="about-caption" /></div>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('about')">Save about</button></div>
+      </div>
+    </div>
+
+    <!-- CAPABILITIES TAB -->
+    <div class="tab-panel" id="tab-capabilities">
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Capabilities</span></div>
+        <div class="repeater" id="caps-repeater"></div>
+        <button class="btn btn--ghost btn--sm repeater-add" onclick="addCapability()">+ Add capability</button>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('capabilities')">Save capabilities</button></div>
+      </div>
+    </div>
+
+    <!-- RESUME TAB -->
+    <div class="tab-panel" id="tab-resume">
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Summary &amp; Info</span></div>
+        <div class="field"><label>Summary</label><textarea id="resume-summary" rows="5"></textarea></div>
+        <div class="form-grid">
+          <div class="field"><label>Location</label><input type="text" id="resume-location" /></div>
+          <div class="field"><label>Email</label><input type="email" id="resume-email" /></div>
+        </div>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('resume')">Save resume</button></div>
+      </div>
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Education</span></div>
+        <div class="repeater" id="edu-repeater"></div>
+        <button class="btn btn--ghost btn--sm repeater-add" onclick="addEducation()">+ Add education</button>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('resume')">Save</button></div>
+      </div>
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Experience</span></div>
+        <div class="repeater" id="exp-repeater"></div>
+        <button class="btn btn--ghost btn--sm repeater-add" onclick="addExperience()">+ Add experience</button>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('resume')">Save</button></div>
+      </div>
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Skills</span></div>
+        <div class="repeater" id="skills-repeater"></div>
+        <button class="btn btn--ghost btn--sm repeater-add" onclick="addSkill()">+ Add skill</button>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('resume')">Save</button></div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS TAB -->
+    <div class="tab-panel" id="tab-testimonials">
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Testimonials</span></div>
+        <div class="repeater" id="testimonials-repeater"></div>
+        <button class="btn btn--ghost btn--sm repeater-add" onclick="addTestimonial()">+ Add testimonial</button>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('testimonials')">Save testimonials</button></div>
+      </div>
+    </div>
+
+    <!-- CONTACT TAB -->
+    <div class="tab-panel" id="tab-contact">
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">Contact Info</span></div>
+        <div class="form-grid">
+          <div class="field"><label>Email</label><input type="email" id="contact-email" /></div>
+          <div class="field"><label>Phone</label><input type="tel" id="contact-phone" /></div>
+          <div class="field"><label>WhatsApp URL</label><input type="url" id="contact-whatsapp" /></div>
+          <div class="field"><label>Location</label><input type="text" id="contact-location" /></div>
+        </div>
+        <div class="section-save-row"><button class="btn btn--primary" onclick="saveSection('contact')">Save contact</button></div>
+      </div>
+    </div>
+
+    <!-- PROJECTS TAB -->
+    <div class="tab-panel" id="tab-projects">
+      <div class="section-header">
+        <h2>Signature Engagements</h2>
+        <button class="btn btn--primary" id="add-project-btn">+ Add project</button>
+      </div>
+      <div id="projects-container"><div class="loading-state"><div class="spinner"></div> Loading…</div></div>
+    </div>
+
+    <!-- CV TAB -->
+    <div class="tab-panel" id="tab-cv">
+      <div class="section-card">
+        <div class="section-card__header"><span class="section-card__title">CV / Resume PDF</span></div>
+        <div id="cv-current" style="font-size:.875rem;color:var(--muted);"></div>
+        <div class="field">
+          <label>Upload new CV (PDF)</label>
+          <div class="upload-area" id="cv-upload-area">
+            <input type="file" id="cv-file" accept=".pdf" />
+            <div id="cv-upload-placeholder">Click to upload your CV (PDF only)</div>
+          </div>
+        </div>
+        <p class="hint">Once uploaded, the Download CV button on your portfolio will point to this file automatically.</p>
+      </div>
+    </div>
+
+  </div><!-- .main -->
+</div><!-- #app -->
+
+<!-- PROJECT MODAL -->
+<div class="modal-backdrop" id="project-modal">
   <div class="modal">
     <div class="modal__header">
-      <h3 id="modal-title">Add project</h3>
-      <button class="modal__close" id="modal-close">&times;</button>
+      <h3 id="project-modal-title">Add project</h3>
+      <button class="modal__close" id="project-modal-close">&times;</button>
     </div>
-
+    <div class="field"><label>Title *</label><input type="text" id="f-title" placeholder="e.g. SourceScout AI" /></div>
+    <div class="field"><label>Description</label><textarea id="f-desc" placeholder="What does this project do?"></textarea></div>
+    <div class="field"><label>Project URL</label><input type="url" id="f-url" placeholder="https://yourproject.com" /></div>
     <div class="field">
-      <label>Project title *</label>
-      <input type="text" id="f-title" placeholder="e.g. SourceScout AI" />
+      <label>Tags (press Enter or comma)</label>
+      <div class="tags-input" id="proj-tags-input"><input type="text" id="proj-tags-raw" placeholder="Python, Flask…" /></div>
     </div>
-
-    <div class="field">
-      <label>Description</label>
-      <textarea id="f-desc" placeholder="What does this project do? Who is it for?"></textarea>
-    </div>
-
-    <div class="field">
-      <label>Project URL</label>
-      <input type="url" id="f-url" placeholder="https://yourproject.com" />
-    </div>
-
-    <div class="field">
-      <label>Tech stack / tags <span style="font-weight:400;text-transform:none;letter-spacing:0">(press Enter or comma to add)</span></label>
-      <div class="tags-input" id="tags-input">
-        <input type="text" id="tags-raw" placeholder="Python, Flask…" />
-      </div>
-    </div>
-
     <div class="field">
       <label>Image</label>
-      <div class="upload-area" id="upload-area">
+      <div class="upload-area" id="proj-upload-area">
         <input type="file" id="f-image-file" accept="image/*" />
-        <div id="upload-placeholder">
-          <div style="font-size:1.5rem;margin-bottom:.4rem;">&#128444;</div>
-          Click to upload an image, or drag &amp; drop
-          <div style="font-size:.78rem;margin-top:.25rem;opacity:.6">PNG, JPG, GIF, WebP</div>
-        </div>
-        <img id="upload-preview" class="upload-preview" alt="Preview" />
+        <div id="proj-upload-placeholder">Click to upload or drag &amp; drop</div>
+        <img id="proj-upload-preview" class="upload-preview" alt="Preview" />
       </div>
-      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;color:var(--muted);font-size:.82rem;">
-        <span>— or paste a URL —</span>
-      </div>
-      <input type="url" id="f-image-url" placeholder="https://example.com/image.png" />
+      <div style="color:var(--muted);font-size:.8rem;margin-top:.4rem;">— or paste URL —</div>
+      <input type="url" id="f-image-url" placeholder="https://example.com/image.png" style="margin-top:.4rem;" />
     </div>
-
-    <div class="field">
-      <label>Display order <span style="font-weight:400;text-transform:none;letter-spacing:0">(0 = first)</span></label>
-      <input type="number" id="f-order" value="0" min="0" />
-    </div>
-
+    <div class="field"><label>Display order (0 = first)</label><input type="number" id="f-order" value="0" min="0" /></div>
     <div class="modal__footer">
-      <button class="btn btn--ghost" id="modal-cancel">Cancel</button>
-      <button class="btn btn--primary" id="modal-save">Save project</button>
+      <button class="btn btn--ghost" id="project-modal-cancel">Cancel</button>
+      <button class="btn btn--primary" id="project-modal-save">Save project</button>
     </div>
   </div>
 </div>
 
-<!-- ── TOASTS ─────────────────────────────────────────────── -->
 <div class="toast-stack" id="toasts"></div>
 
 <script>
 const API = '';
-let editingId = null;
-let currentTags = [];
+let content = {};
+let editingProjectId = null;
+let projTags = [];
+let typedTags = [];
 
-// ── Toast ──────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────
 function toast(msg, type = 'success') {
   const el = document.createElement('div');
   el.className = `toast toast--${type}`;
@@ -304,290 +345,473 @@ function toast(msg, type = 'success') {
   document.getElementById('toasts').appendChild(el);
   setTimeout(() => el.remove(), 3500);
 }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function apiFetch(url, opts = {}) {
+  const r = await fetch(API + url, { credentials: 'include', ...opts });
+  return r;
+}
 
 // ── Auth ───────────────────────────────────────────────────
-['login-user', 'login-pass'].forEach(id => {
-  document.getElementById(id).addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('login-btn').click();
-  });
+['login-user','login-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('login-btn').click(); });
 });
 
 document.getElementById('login-btn').addEventListener('click', async () => {
   const username = document.getElementById('login-user').value.trim();
-  const pass     = document.getElementById('login-pass').value;
-  const btn      = document.getElementById('login-btn');
+  const password = document.getElementById('login-pass').value;
+  const btn = document.getElementById('login-btn');
   btn.textContent = 'Signing in…'; btn.disabled = true;
   try {
-    const r = await fetch(`${API}/api/admin/login`, {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ username, password: pass }), credentials: 'include'
-    });
+    const r = await apiFetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password}) });
     const d = await r.json();
-    if (d.success) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      loadProjects();
-    } else {
-      document.getElementById('login-error').style.display = 'block';
-    }
-  } finally {
-    btn.textContent = 'Sign in'; btn.disabled = false;
-  }
+    if (d.success) { showApp(); }
+    else { document.getElementById('login-error').style.display = 'block'; }
+  } finally { btn.textContent = 'Sign in'; btn.disabled = false; }
 });
 
 document.getElementById('logout-btn').addEventListener('click', async () => {
-  await fetch(`${API}/api/admin/logout`, { method: 'POST', credentials: 'include' });
+  await apiFetch('/api/admin/logout', { method:'POST' });
   location.reload();
 });
 
-// Check existing session on load
-(async () => {
-  const r = await fetch(`${API}/api/admin/check`, { credentials: 'include' });
+async function checkSession() {
+  const r = await apiFetch('/api/admin/check');
   const d = await r.json();
-  if (d.authenticated) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    loadProjects();
-  }
-})();
+  if (d.authenticated) showApp();
+}
 
-// ── Projects ───────────────────────────────────────────────
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  loadAll();
+}
+
+checkSession();
+
+// ── Tabs ───────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('is-active');
+  });
+});
+
+// ── Load all content ───────────────────────────────────────
+async function loadAll() {
+  const r = await apiFetch('/api/content');
+  content = await r.json();
+  populateHero(content.hero || {});
+  populateAbout(content.about || {});
+  populateCapabilities(content.capabilities || []);
+  populateResume(content.resume || {});
+  populateTestimonials(content.testimonials || []);
+  populateContact(content.contact || {});
+  populateCv(content.cv_url || '');
+  loadProjects();
+}
+
+// ── HERO ───────────────────────────────────────────────────
+function populateHero(h) {
+  document.getElementById('hero-name').value    = h.name    || '';
+  document.getElementById('hero-eyebrow').value = h.eyebrow || '';
+  document.getElementById('hero-title').value   = h.title   || '';
+  typedTags = [...(h.typed_items || [])];
+  renderTypedTags();
+  renderStats(h.stats || []);
+}
+
+function buildHeroPayload() {
+  flushTag('typed-tags-raw', typedTags);
+  return {
+    name:         document.getElementById('hero-name').value.trim(),
+    eyebrow:      document.getElementById('hero-eyebrow').value.trim(),
+    title:        document.getElementById('hero-title').value.trim(),
+    typed_items:  [...typedTags],
+    stats:        collectStats(),
+  };
+}
+
+// Typed tags
+function renderTypedTags() { renderTagsIn('typed-tags-input', 'typed-tags-raw', typedTags); }
+document.getElementById('typed-tags-input').addEventListener('click', () => document.getElementById('typed-tags-raw').focus());
+document.getElementById('typed-tags-raw').addEventListener('keydown', e => {
+  if (e.key==='Enter'||e.key===',') { e.preventDefault(); flushTag('typed-tags-raw', typedTags); renderTypedTags(); }
+  if (e.key==='Backspace' && !e.target.value && typedTags.length) { typedTags.pop(); renderTypedTags(); }
+});
+
+// Stats
+function renderStats(stats) {
+  const rep = document.getElementById('stats-repeater');
+  rep.innerHTML = '';
+  stats.forEach((s, i) => rep.appendChild(buildStatItem(s, i)));
+}
+function buildStatItem(s = {}, i) {
+  const div = document.createElement('div');
+  div.className = 'repeater-item';
+  div.dataset.index = i;
+  div.innerHTML = `
+    <button class="repeater-item__remove" onclick="removeStat(${i})">×</button>
+    <div class="form-grid">
+      <div class="field"><label>Number / text</label><input type="text" class="stat-num" value="${esc(s.num||'')}" placeholder="3+" /></div>
+      <div class="field"><label>Label</label><input type="text" class="stat-label" value="${esc(s.label||'')}" placeholder="Years coding" /></div>
+    </div>`;
+  return div;
+}
+function collectStats() {
+  return Array.from(document.querySelectorAll('#stats-repeater .repeater-item')).map(el => ({
+    num:   el.querySelector('.stat-num').value.trim(),
+    label: el.querySelector('.stat-label').value.trim(),
+  }));
+}
+function addStat() {
+  const rep = document.getElementById('stats-repeater');
+  const i = rep.children.length;
+  rep.appendChild(buildStatItem({}, i));
+}
+function removeStat(i) {
+  const items = document.querySelectorAll('#stats-repeater .repeater-item');
+  if (items[i]) items[i].remove();
+}
+
+// ── ABOUT ──────────────────────────────────────────────────
+function populateAbout(a) {
+  const bio = a.bio || [];
+  document.getElementById('about-bio-0').value  = bio[0] || '';
+  document.getElementById('about-bio-1').value  = bio[1] || '';
+  document.getElementById('about-photo').value  = a.photo_url || '';
+  document.getElementById('about-caption').value = a.caption || '';
+  if (a.photo_url) {
+    const prev = document.getElementById('photo-preview');
+    prev.src = a.photo_url; prev.style.display = 'block';
+  }
+}
+function buildAboutPayload() {
+  return {
+    bio: [
+      document.getElementById('about-bio-0').value.trim(),
+      document.getElementById('about-bio-1').value.trim(),
+    ].filter(Boolean),
+    photo_url: document.getElementById('about-photo').value.trim(),
+    caption:   document.getElementById('about-caption').value.trim(),
+  };
+}
+
+// Photo upload
+setupImageUpload('photo-upload-area', 'photo-file', 'photo-preview', 'photo-upload-placeholder', url => {
+  document.getElementById('about-photo').value = url;
+});
+
+// ── CAPABILITIES ───────────────────────────────────────────
+function populateCapabilities(caps) {
+  const rep = document.getElementById('caps-repeater');
+  rep.innerHTML = '';
+  caps.forEach((c, i) => rep.appendChild(buildCapItem(c, i)));
+}
+function buildCapItem(c = {}, i) {
+  const div = document.createElement('div');
+  div.className = 'repeater-item';
+  div.dataset.index = i;
+  div.innerHTML = `
+    <button class="repeater-item__remove" onclick="removeCap(this)">×</button>
+    <div class="field"><label>Title</label><input type="text" class="cap-title" value="${esc(c.title||'')}" /></div>
+    <div class="field"><label>Description</label><textarea class="cap-desc" rows="2">${esc(c.desc||'')}</textarea></div>
+    <div class="field"><label>Bullet points (one per line)</label><textarea class="cap-items" rows="3">${(c.items||[]).join('\n')}</textarea></div>`;
+  return div;
+}
+function addCapability() {
+  const rep = document.getElementById('caps-repeater');
+  rep.appendChild(buildCapItem({}, rep.children.length));
+}
+function removeCap(btn) { btn.closest('.repeater-item').remove(); }
+function buildCapabilitiesPayload() {
+  return Array.from(document.querySelectorAll('#caps-repeater .repeater-item')).map(el => ({
+    title: el.querySelector('.cap-title').value.trim(),
+    desc:  el.querySelector('.cap-desc').value.trim(),
+    items: el.querySelector('.cap-items').value.split('\n').map(s=>s.trim()).filter(Boolean),
+  }));
+}
+
+// ── RESUME ────────────────────────────────────────────────
+function populateResume(r) {
+  document.getElementById('resume-summary').value  = r.summary  || '';
+  document.getElementById('resume-location').value = r.location || '';
+  document.getElementById('resume-email').value    = r.email    || '';
+  renderRepeater('edu-repeater',    r.education  || [], buildEduItem,  'removeEdu');
+  renderRepeater('exp-repeater',    r.experience || [], buildExpItem,  'removeExp');
+  renderRepeater('skills-repeater', r.skills     || [], buildSkillItem,'removeSkill');
+}
+function renderRepeater(id, items, builder, removeFn) {
+  const rep = document.getElementById(id);
+  rep.innerHTML = '';
+  items.forEach((item, i) => rep.appendChild(builder(item, i)));
+}
+function buildEduItem(e = {}, i) {
+  const div = document.createElement('div'); div.className = 'repeater-item';
+  div.innerHTML = `<button class="repeater-item__remove" onclick="removeEdu(this)">×</button>
+    <div class="form-grid">
+      <div class="field"><label>Year range</label><input type="text" class="edu-year" value="${esc(e.year||'')}" placeholder="2024 — 2027" /></div>
+      <div class="field span2"><label>Role / Institution</label><input type="text" class="edu-role" value="${esc(e.role||'')}" /></div>
+      <div class="field span2"><label>Note</label><input type="text" class="edu-note" value="${esc(e.note||'')}" /></div>
+    </div>`; return div;
+}
+function buildExpItem(e = {}, i) {
+  const div = document.createElement('div'); div.className = 'repeater-item';
+  div.innerHTML = `<button class="repeater-item__remove" onclick="removeExp(this)">×</button>
+    <div class="form-grid">
+      <div class="field"><label>Year range</label><input type="text" class="exp-year" value="${esc(e.year||'')}" placeholder="2025 — Present" /></div>
+      <div class="field span2"><label>Role / Company</label><input type="text" class="exp-role" value="${esc(e.role||'')}" /></div>
+      <div class="field span2"><label>URL (optional)</label><input type="url" class="exp-url" value="${esc(e.url||'')}" /></div>
+      <div class="field span2"><label>Note</label><textarea class="exp-note" rows="2">${esc(e.note||'')}</textarea></div>
+    </div>`; return div;
+}
+function buildSkillItem(s = {}, i) {
+  const div = document.createElement('div'); div.className = 'repeater-item';
+  div.innerHTML = `<button class="repeater-item__remove" onclick="removeSkill(this)">×</button>
+    <div class="form-grid">
+      <div class="field"><label>Skill name</label><input type="text" class="skill-name" value="${esc(s.name||'')}" placeholder="Python" /></div>
+      <div class="field"><label>Level (0–100)</label><input type="number" class="skill-value" value="${s.value||80}" min="0" max="100" /></div>
+    </div>`; return div;
+}
+function addEducation() { const r=document.getElementById('edu-repeater'); r.appendChild(buildEduItem({},r.children.length)); }
+function addExperience() { const r=document.getElementById('exp-repeater'); r.appendChild(buildExpItem({},r.children.length)); }
+function addSkill()      { const r=document.getElementById('skills-repeater'); r.appendChild(buildSkillItem({},r.children.length)); }
+function removeEdu(btn)   { btn.closest('.repeater-item').remove(); }
+function removeExp(btn)   { btn.closest('.repeater-item').remove(); }
+function removeSkill(btn) { btn.closest('.repeater-item').remove(); }
+
+function buildResumePayload() {
+  return {
+    summary:  document.getElementById('resume-summary').value.trim(),
+    location: document.getElementById('resume-location').value.trim(),
+    email:    document.getElementById('resume-email').value.trim(),
+    education: Array.from(document.querySelectorAll('#edu-repeater .repeater-item')).map(el => ({
+      year: el.querySelector('.edu-year').value.trim(),
+      role: el.querySelector('.edu-role').value.trim(),
+      note: el.querySelector('.edu-note').value.trim(),
+    })),
+    experience: Array.from(document.querySelectorAll('#exp-repeater .repeater-item')).map(el => ({
+      year: el.querySelector('.exp-year').value.trim(),
+      role: el.querySelector('.exp-role').value.trim(),
+      url:  el.querySelector('.exp-url').value.trim(),
+      note: el.querySelector('.exp-note').value.trim(),
+    })),
+    skills: Array.from(document.querySelectorAll('#skills-repeater .repeater-item')).map(el => ({
+      name:  el.querySelector('.skill-name').value.trim(),
+      value: parseInt(el.querySelector('.skill-value').value) || 0,
+    })),
+  };
+}
+
+// ── TESTIMONIALS ───────────────────────────────────────────
+function populateTestimonials(items) {
+  const rep = document.getElementById('testimonials-repeater');
+  rep.innerHTML = '';
+  items.forEach((t, i) => rep.appendChild(buildTestimonialItem(t, i)));
+}
+function buildTestimonialItem(t = {}, i) {
+  const div = document.createElement('div'); div.className = 'repeater-item';
+  div.innerHTML = `<button class="repeater-item__remove" onclick="removeTestimonial(this)">×</button>
+    <div class="field"><label>Quote</label><textarea class="test-quote" rows="3">${esc(t.quote||'')}</textarea></div>
+    <div class="field"><label>Author</label><input type="text" class="test-author" value="${esc(t.author||'')}" placeholder="Name, Company" /></div>`;
+  return div;
+}
+function addTestimonial() { const r=document.getElementById('testimonials-repeater'); r.appendChild(buildTestimonialItem({},r.children.length)); }
+function removeTestimonial(btn) { btn.closest('.repeater-item').remove(); }
+function buildTestimonialsPayload() {
+  return Array.from(document.querySelectorAll('#testimonials-repeater .repeater-item')).map(el => ({
+    quote:  el.querySelector('.test-quote').value.trim(),
+    author: el.querySelector('.test-author').value.trim(),
+  }));
+}
+
+// ── CONTACT ────────────────────────────────────────────────
+function populateContact(c) {
+  document.getElementById('contact-email').value    = c.email    || '';
+  document.getElementById('contact-phone').value    = c.phone    || '';
+  document.getElementById('contact-whatsapp').value = c.whatsapp || '';
+  document.getElementById('contact-location').value = c.location || '';
+}
+function buildContactPayload() {
+  return {
+    email:    document.getElementById('contact-email').value.trim(),
+    phone:    document.getElementById('contact-phone').value.trim(),
+    whatsapp: document.getElementById('contact-whatsapp').value.trim(),
+    location: document.getElementById('contact-location').value.trim(),
+  };
+}
+
+// ── CV ─────────────────────────────────────────────────────
+function populateCv(url) {
+  const el = document.getElementById('cv-current');
+  el.innerHTML = url ? `Current CV: <a href="${url}" target="_blank" style="color:var(--accent)">${url} ↗</a>` : 'No CV uploaded yet.';
+}
+const cvArea = document.getElementById('cv-upload-area');
+const cvFile = document.getElementById('cv-file');
+cvArea.addEventListener('click', () => cvFile.click());
+cvFile.addEventListener('change', async () => {
+  if (!cvFile.files[0]) return;
+  const fd = new FormData(); fd.append('cv', cvFile.files[0]);
+  document.getElementById('cv-upload-placeholder').textContent = 'Uploading…';
+  const r = await apiFetch('/api/admin/upload/cv', { method:'POST', body: fd });
+  const d = await r.json();
+  if (d.url) { toast('CV uploaded ✓'); populateCv(d.url); document.getElementById('cv-upload-placeholder').textContent = '✅ Uploaded'; }
+  else { toast(d.error||'Upload failed', 'error'); document.getElementById('cv-upload-placeholder').textContent = 'Click to upload CV (PDF)'; }
+});
+
+// ── SAVE SECTION ───────────────────────────────────────────
+const payloadBuilders = {
+  hero:         buildHeroPayload,
+  about:        buildAboutPayload,
+  capabilities: buildCapabilitiesPayload,
+  resume:       buildResumePayload,
+  testimonials: buildTestimonialsPayload,
+  contact:      buildContactPayload,
+};
+
+async function saveSection(key) {
+  const payload = payloadBuilders[key]();
+  const r = await apiFetch(`/api/admin/content/${key}`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+  });
+  if (r.ok) toast(`${key.charAt(0).toUpperCase()+key.slice(1)} saved ✓`);
+  else toast('Save failed', 'error');
+}
+
+// ── PROJECTS ───────────────────────────────────────────────
 async function loadProjects() {
   const container = document.getElementById('projects-container');
   container.innerHTML = '<div class="loading-state"><div class="spinner"></div> Loading…</div>';
-  const r = await fetch(`${API}/api/admin/projects`, { credentials: 'include' });
+  const r = await apiFetch('/api/admin/projects');
   const projects = await r.json();
-  renderProjects(projects);
-}
-
-function renderProjects(projects) {
-  const container = document.getElementById('projects-container');
-  if (!projects.length) {
-    container.innerHTML = '<div class="empty"><div style="font-size:2.5rem">📂</div><p>No projects yet. Add your first one!</p></div>';
-    return;
-  }
+  if (!projects.length) { container.innerHTML = '<div class="empty">📂 No projects yet.</div>'; return; }
   container.innerHTML = '';
-  const grid = document.createElement('div');
-  grid.className = 'projects-grid';
-  projects.forEach(p => grid.appendChild(buildCard(p)));
+  const grid = document.createElement('div'); grid.className = 'projects-grid';
+  projects.forEach(p => grid.appendChild(buildProjectCard(p)));
   container.appendChild(grid);
 }
-
-function buildCard(p) {
-  const card = document.createElement('div');
-  card.className = 'project-card';
-  card.dataset.id = p.id;
-
+function buildProjectCard(p) {
+  const card = document.createElement('div'); card.className = 'project-card';
   const imgHtml = p.image_url
-    ? `<img class="project-card__thumb" src="${p.image_url}" alt="${p.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-      + `<div class="project-card__thumb--placeholder" style="display:none">🖼</div>`
+    ? `<img class="project-card__thumb" src="${p.image_url}" alt="${esc(p.title)}" onerror="this.style.display='none'">`
     : `<div class="project-card__thumb--placeholder">🖼</div>`;
-
-  const tagsHtml = (p.tags || []).map(t => `<span class="project-card__tag">${t}</span>`).join('');
-
-  card.innerHTML = `
-    ${imgHtml}
+  const tagsHtml = (p.tags||[]).map(t=>`<span class="project-card__tag">${esc(t)}</span>`).join('');
+  card.innerHTML = `${imgHtml}
     <div class="project-card__body">
-      <div class="project-card__title">${p.title}</div>
-      <div class="project-card__desc">${p.description || '<em style="opacity:.5">No description</em>'}</div>
-      ${tagsHtml ? `<div class="project-card__tags">${tagsHtml}</div>` : ''}
-      ${p.project_url ? `<a href="${p.project_url}" target="_blank" rel="noopener" style="font-size:.8rem;color:var(--accent);margin-top:.25rem;display:inline-block;">${p.project_url} ↗</a>` : ''}
+      <div class="project-card__title">${esc(p.title)}</div>
+      <div class="project-card__desc">${esc(p.description||'')}</div>
+      ${tagsHtml?`<div class="project-card__tags">${tagsHtml}</div>`:''}
     </div>
     <div class="project-card__actions">
-      <button class="btn btn--ghost btn--sm edit-btn">✏️ Edit</button>
-      <button class="btn btn--danger btn--sm delete-btn">🗑 Delete</button>
+      <button class="btn btn--ghost btn--sm">✏️ Edit</button>
+      <button class="btn btn--danger btn--sm">🗑 Delete</button>
     </div>`;
-
-  card.querySelector('.edit-btn').addEventListener('click', () => openEdit(p));
-  card.querySelector('.delete-btn').addEventListener('click', () => confirmDelete(p));
+  card.querySelector('.btn--ghost').addEventListener('click', () => openProjectEdit(p));
+  card.querySelector('.btn--danger').addEventListener('click', () => deleteProject(p));
   return card;
 }
+document.getElementById('add-project-btn').addEventListener('click', () => openProjectModal(null));
 
-// ── Tags input ─────────────────────────────────────────────
-function renderTags() {
-  const container = document.getElementById('tags-input');
+function openProjectEdit(p) { openProjectModal(p); }
+function openProjectModal(p) {
+  editingProjectId = p ? p.id : null;
+  document.getElementById('project-modal-title').textContent = p ? 'Edit project' : 'Add project';
+  document.getElementById('f-title').value  = p?.title       || '';
+  document.getElementById('f-desc').value   = p?.description || '';
+  document.getElementById('f-url').value    = p?.project_url || '';
+  document.getElementById('f-image-url').value = p?.image_url || '';
+  document.getElementById('f-order').value  = p?.order_index ?? 0;
+  projTags = [...(p?.tags || [])];
+  renderProjTags();
+  const prev = document.getElementById('proj-upload-preview');
+  if (p?.image_url) { prev.src = p.image_url; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; }
+  document.getElementById('project-modal').classList.add('is-open');
+}
+function closeProjectModal() {
+  document.getElementById('project-modal').classList.remove('is-open');
+  editingProjectId = null; projTags = [];
+  ['f-title','f-desc','f-url','f-image-url'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-order').value = 0;
+  document.getElementById('proj-upload-preview').style.display = 'none';
+  renderProjTags();
+}
+document.getElementById('project-modal-close').addEventListener('click', closeProjectModal);
+document.getElementById('project-modal-cancel').addEventListener('click', closeProjectModal);
+document.getElementById('project-modal').addEventListener('click', e => { if (e.target===document.getElementById('project-modal')) closeProjectModal(); });
+
+document.getElementById('project-modal-save').addEventListener('click', async () => {
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { toast('Title is required', 'error'); return; }
+  flushTag('proj-tags-raw', projTags);
+  const payload = { title, description: document.getElementById('f-desc').value.trim(), project_url: document.getElementById('f-url').value.trim(), image_url: document.getElementById('f-image-url').value.trim(), tags: [...projTags], order_index: parseInt(document.getElementById('f-order').value)||0 };
+  const url = editingProjectId ? `/api/admin/projects/${editingProjectId}` : '/api/admin/projects';
+  const r = await apiFetch(url, { method: editingProjectId?'PUT':'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  if (r.ok) { toast(editingProjectId?'Updated ✓':'Added ✓'); closeProjectModal(); loadProjects(); }
+  else toast('Save failed', 'error');
+});
+
+async function deleteProject(p) {
+  if (!confirm(`Delete "${p.title}"?`)) return;
+  await apiFetch(`/api/admin/projects/${p.id}`, { method:'DELETE' });
+  toast('Deleted'); loadProjects();
+}
+
+// Project image upload
+setupImageUpload('proj-upload-area', 'f-image-file', 'proj-upload-preview', 'proj-upload-placeholder', url => {
+  document.getElementById('f-image-url').value = url;
+});
+
+// Project tags
+function renderProjTags() { renderTagsIn('proj-tags-input', 'proj-tags-raw', projTags); }
+document.getElementById('proj-tags-input').addEventListener('click', () => document.getElementById('proj-tags-raw').focus());
+document.getElementById('proj-tags-raw').addEventListener('keydown', e => {
+  if (e.key==='Enter'||e.key===',') { e.preventDefault(); flushTag('proj-tags-raw', projTags); renderProjTags(); }
+  if (e.key==='Backspace' && !e.target.value && projTags.length) { projTags.pop(); renderProjTags(); }
+});
+
+// ── Tag helpers ────────────────────────────────────────────
+function flushTag(inputId, arr) {
+  const val = document.getElementById(inputId).value.trim().replace(/,/g,'');
+  if (val && !arr.includes(val)) arr.push(val);
+  document.getElementById(inputId).value = '';
+}
+function renderTagsIn(containerId, inputId, arr) {
+  const container = document.getElementById(containerId);
   container.querySelectorAll('.tag-pill').forEach(el => el.remove());
-  const input = document.getElementById('tags-raw');
-  currentTags.forEach(tag => {
-    const pill = document.createElement('span');
-    pill.className = 'tag-pill';
-    pill.innerHTML = `${tag} <button type="button" data-tag="${tag}">&times;</button>`;
+  const input = document.getElementById(inputId);
+  arr.forEach(tag => {
+    const pill = document.createElement('span'); pill.className = 'tag-pill';
+    pill.innerHTML = `${esc(tag)} <button type="button">&times;</button>`;
     pill.querySelector('button').addEventListener('click', () => {
-      currentTags = currentTags.filter(t => t !== tag);
-      renderTags();
+      const i = arr.indexOf(tag); if (i>-1) arr.splice(i,1);
+      renderTagsIn(containerId, inputId, arr);
     });
     container.insertBefore(pill, input);
   });
 }
 
-document.getElementById('tags-input').addEventListener('click', () => {
-  document.getElementById('tags-raw').focus();
-});
-
-document.getElementById('tags-raw').addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ',') {
-    e.preventDefault();
-    addTag(e.target.value);
-  }
-  if (e.key === 'Backspace' && !e.target.value && currentTags.length) {
-    currentTags.pop();
-    renderTags();
-  }
-});
-
-document.getElementById('tags-raw').addEventListener('blur', e => {
-  if (e.target.value.trim()) addTag(e.target.value);
-});
-
-function addTag(val) {
-  const tag = val.trim().replace(/,/g, '');
-  if (tag && !currentTags.includes(tag)) {
-    currentTags.push(tag);
-    renderTags();
-  }
-  document.getElementById('tags-raw').value = '';
-}
-
-// ── Image upload ───────────────────────────────────────────
-let uploadedImageUrl = null;
-
-const uploadArea = document.getElementById('upload-area');
-const fileInput  = document.getElementById('f-image-file');
-const preview    = document.getElementById('upload-preview');
-
-uploadArea.addEventListener('click', () => fileInput.click());
-uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
-uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-uploadArea.addEventListener('drop', e => {
-  e.preventDefault(); uploadArea.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
-
-async function handleFile(file) {
-  const fd = new FormData();
-  fd.append('image', file);
-  uploadArea.querySelector('#upload-placeholder').textContent = 'Uploading…';
-  try {
-    const r = await fetch(`${API}/api/admin/upload`, { method: 'POST', body: fd, credentials: 'include' });
+// ── Image upload helper ────────────────────────────────────
+function setupImageUpload(areaId, fileInputId, previewId, placeholderId, onUrl) {
+  const area = document.getElementById(areaId);
+  const input = document.getElementById(fileInputId);
+  const preview = document.getElementById(previewId);
+  const placeholder = document.getElementById(placeholderId);
+  area.addEventListener('click', () => input.click());
+  area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('drag-over'); });
+  area.addEventListener('dragleave', () => area.classList.remove('drag-over'));
+  area.addEventListener('drop', e => { e.preventDefault(); area.classList.remove('drag-over'); if (e.dataTransfer.files[0]) doUpload(e.dataTransfer.files[0]); });
+  input.addEventListener('change', () => { if (input.files[0]) doUpload(input.files[0]); });
+  async function doUpload(file) {
+    placeholder.textContent = 'Uploading…';
+    const fd = new FormData(); fd.append('image', file);
+    const r = await apiFetch('/api/admin/upload', { method:'POST', body: fd });
     const d = await r.json();
-    if (d.url) {
-      uploadedImageUrl = d.url;
-      document.getElementById('f-image-url').value = d.url;
-      preview.src = d.url;
-      preview.style.display = 'block';
-      document.getElementById('upload-placeholder').innerHTML = '✅ Uploaded';
-    } else {
-      toast(d.error || 'Upload failed', 'error');
-      resetUploadArea();
-    }
-  } catch {
-    toast('Upload failed', 'error');
-    resetUploadArea();
+    if (d.url) { onUrl(d.url); preview.src = d.url; preview.style.display = 'block'; placeholder.textContent = '✅ Uploaded'; }
+    else { toast(d.error||'Upload failed','error'); placeholder.textContent = 'Click to upload'; }
   }
-}
-
-function resetUploadArea() {
-  document.getElementById('upload-placeholder').innerHTML = `<div style="font-size:1.5rem;margin-bottom:.4rem;">🖼</div>Click to upload or drag & drop<div style="font-size:.78rem;margin-top:.25rem;opacity:.6">PNG, JPG, GIF, WebP</div>`;
-  preview.style.display = 'none';
-  uploadedImageUrl = null;
-}
-
-// ── Modal ──────────────────────────────────────────────────
-function openModal(title) {
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal').classList.add('is-open');
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('is-open');
-  editingId = null;
-  currentTags = [];
-  document.getElementById('f-title').value = '';
-  document.getElementById('f-desc').value = '';
-  document.getElementById('f-url').value = '';
-  document.getElementById('f-image-url').value = '';
-  document.getElementById('f-order').value = 0;
-  document.getElementById('tags-raw').value = '';
-  renderTags();
-  resetUploadArea();
-}
-
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-cancel').addEventListener('click', closeModal);
-document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
-
-document.getElementById('add-btn').addEventListener('click', () => {
-  editingId = null;
-  openModal('Add project');
-});
-
-function openEdit(p) {
-  editingId = p.id;
-  document.getElementById('f-title').value   = p.title || '';
-  document.getElementById('f-desc').value    = p.description || '';
-  document.getElementById('f-url').value     = p.project_url || '';
-  document.getElementById('f-image-url').value = p.image_url || '';
-  document.getElementById('f-order').value   = p.order_index ?? 0;
-  currentTags = [...(p.tags || [])];
-  renderTags();
-  if (p.image_url) {
-    preview.src = p.image_url;
-    preview.style.display = 'block';
-    document.getElementById('upload-placeholder').innerHTML = '✅ Image set';
-  }
-  openModal('Edit project');
-}
-
-document.getElementById('modal-save').addEventListener('click', async () => {
-  const title = document.getElementById('f-title').value.trim();
-  if (!title) { toast('Title is required', 'error'); return; }
-
-  // Flush any unsubmitted tag text
-  const rawTag = document.getElementById('tags-raw').value.trim();
-  if (rawTag) addTag(rawTag);
-
-  const imageUrl = document.getElementById('f-image-url').value.trim();
-
-  const payload = {
-    title,
-    description: document.getElementById('f-desc').value.trim(),
-    project_url: document.getElementById('f-url').value.trim(),
-    image_url:   imageUrl,
-    tags:        currentTags,
-    order_index: parseInt(document.getElementById('f-order').value) || 0,
-  };
-
-  const btn = document.getElementById('modal-save');
-  btn.textContent = 'Saving…'; btn.disabled = true;
-
-  try {
-    const url    = editingId ? `${API}/api/admin/projects/${editingId}` : `${API}/api/admin/projects`;
-    const method = editingId ? 'PUT' : 'POST';
-    const r = await fetch(url, {
-      method, credentials: 'include',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    if (r.ok) {
-      toast(editingId ? 'Project updated ✓' : 'Project added ✓');
-      closeModal();
-      loadProjects();
-    } else {
-      const d = await r.json();
-      toast(d.error || 'Save failed', 'error');
-    }
-  } finally {
-    btn.textContent = 'Save project'; btn.disabled = false;
-  }
-});
-
-// ── Delete ─────────────────────────────────────────────────
-function confirmDelete(p) {
-  if (!confirm(`Delete "${p.title}"? This cannot be undone.`)) return;
-  fetch(`${API}/api/admin/projects/${p.id}`, { method: 'DELETE', credentials: 'include' })
-    .then(() => { toast('Project deleted'); loadProjects(); })
-    .catch(() => toast('Delete failed', 'error'));
 }
 </script>
 </body>

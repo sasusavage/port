@@ -9,7 +9,8 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from backend.database import (
     init_db, get_all_projects, get_project, create_project,
-    update_project, delete_project, reorder_projects, verify_admin
+    update_project, delete_project, reorder_projects, verify_admin,
+    get_all_content, get_content, set_content
 )
 
 # Load .env first so os.getenv calls below pick up the values
@@ -104,8 +105,12 @@ def admin():
 
 @app.route('/api/projects', methods=['GET'])
 def api_projects():
-    """Return all portfolio projects (used by the frontend)."""
     return jsonify(get_all_projects())
+
+@app.route('/api/content', methods=['GET'])
+def api_content():
+    """Return all site content sections for the frontend."""
+    return jsonify(get_all_content())
 
 
 @app.route('/api/health')
@@ -190,9 +195,33 @@ def admin_delete_project(pid):
 @admin_required
 def admin_reorder():
     data = request.get_json() or {}
-    ids = data.get('ids', [])
-    reorder_projects(ids)
+    reorder_projects(data.get('ids', []))
     return jsonify({'success': True})
+
+@app.route('/api/admin/content/<key>', methods=['POST'])
+@admin_required
+def admin_set_content(key):
+    """Save a site content section."""
+    data = request.get_json()
+    if data is None:
+        return jsonify({'error': 'No data'}), 400
+    set_content(key, data)
+    return jsonify({'success': True, 'key': key})
+
+@app.route('/api/admin/upload/cv', methods=['POST'])
+@admin_required
+def admin_upload_cv():
+    """Upload CV PDF."""
+    if 'cv' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+    file = request.files['cv']
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({'error': 'Only PDF files allowed'}), 400
+    filepath = os.path.join(UPLOADS_DIR, 'cv.pdf')
+    file.save(filepath)
+    cv_url = '/uploads/cv.pdf'
+    set_content('cv_url', cv_url)
+    return jsonify({'url': cv_url})
 
 
 # ── Image upload ──────────────────────────────────────────────────────────────

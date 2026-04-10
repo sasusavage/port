@@ -294,6 +294,118 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('is-loaded');
     }
 
+    // ── Load all site content from API ─────────────────────────────────
+    fetch('/api/content')
+        .then(r => r.json())
+        .then(content => {
+            // Hero
+            const h = content.hero;
+            if (h) {
+                const nameEl = document.querySelector('.hero__name');
+                if (nameEl && h.name) nameEl.textContent = h.name;
+                const eyebrowEl = document.querySelector('.hero__eyebrow');
+                if (eyebrowEl && h.eyebrow) eyebrowEl.textContent = h.eyebrow;
+                const titleEl = document.querySelector('.hero__title');
+                if (titleEl && h.title) {
+                    // preserve accent span
+                    const accent = titleEl.querySelector('.hero__title--accent');
+                    if (!accent) titleEl.textContent = h.title;
+                }
+                const typedEl = document.querySelector('.typed');
+                if (typedEl && h.typed_items && window.Typed) {
+                    if (window._typedInstance) window._typedInstance.destroy();
+                    window._typedInstance = new Typed('.typed', {
+                        strings: h.typed_items, typeSpeed: 100, backSpeed: 50,
+                        backDelay: 1500, loop: true, smartBackspace: true, cursorChar: '|'
+                    });
+                }
+                if (h.stats) {
+                    const statNums = document.querySelectorAll('.hero__stat-num');
+                    const statLabels = document.querySelectorAll('.hero__stat-label');
+                    h.stats.forEach((s, i) => {
+                        if (statNums[i]) statNums[i].textContent = s.num;
+                        if (statLabels[i]) statLabels[i].textContent = s.label;
+                    });
+                }
+            }
+
+            // CV button
+            if (content.cv_url) {
+                const cvBtn = document.querySelector('a[download]');
+                if (cvBtn) cvBtn.href = content.cv_url;
+            }
+
+            // About
+            const a = content.about;
+            if (a) {
+                const stmts = document.querySelectorAll('.about__statement p');
+                if (a.bio) a.bio.forEach((text, i) => { if (stmts[i]) stmts[i].textContent = text; });
+                const photo = document.querySelector('.about__avatar');
+                if (photo && a.photo_url) photo.src = a.photo_url;
+                const caption = document.querySelector('.about__avatar-caption');
+                if (caption && a.caption) caption.textContent = a.caption;
+            }
+
+            // Capabilities
+            if (Array.isArray(content.capabilities)) {
+                const cards = document.querySelectorAll('.capability');
+                content.capabilities.forEach((cap, i) => {
+                    const card = cards[i];
+                    if (!card) return;
+                    const h3 = card.querySelector('h3');
+                    const p  = card.querySelector('p');
+                    const lis = card.querySelectorAll('li');
+                    if (h3) h3.textContent = cap.title;
+                    if (p)  p.textContent  = cap.desc;
+                    if (cap.items) cap.items.forEach((item, j) => { if (lis[j]) lis[j].textContent = item; });
+                });
+            }
+
+            // Resume
+            const r = content.resume;
+            if (r) {
+                const summaryEl = document.querySelector('.resume__grid p');
+                if (summaryEl && r.summary) summaryEl.textContent = r.summary;
+                const metaItems = document.querySelectorAll('.resume__meta li');
+                if (metaItems[0] && r.location) metaItems[0].innerHTML = `<strong>Location:</strong> ${r.location}`;
+                if (metaItems[1] && r.email)    metaItems[1].innerHTML = `<strong>Email:</strong> <a href="mailto:${r.email}">${r.email}</a>`;
+
+                const skillsList = document.getElementById('skills-list');
+                if (skillsList && r.skills) {
+                    skillsList.innerHTML = '';
+                    r.skills.forEach(sk => {
+                        const art = document.createElement('article');
+                        art.className = 'skill';
+                        art.innerHTML = `
+                            <div class="skill__header">
+                                <span class="skill__name">${sk.name}</span>
+                                <span class="skill__value">${sk.value}%</span>
+                            </div>
+                            <div class="skill__bar" role="progressbar" aria-valuenow="${sk.value}" aria-valuemin="0" aria-valuemax="100">
+                                <span class="skill__bar-fill" data-width="${sk.value}%"></span>
+                            </div>`;
+                        skillsList.appendChild(art);
+                    });
+                }
+            }
+
+            // Testimonials
+            if (Array.isArray(content.testimonials)) {
+                const grid = document.querySelector('.testimonials__grid');
+                if (grid) {
+                    grid.innerHTML = '';
+                    content.testimonials.forEach(t => {
+                        const bq = document.createElement('blockquote');
+                        bq.className = 'testimonial';
+                        bq.setAttribute('data-animate', 'fade-in');
+                        bq.innerHTML = `<p>${t.quote}</p><footer class="testimonial__footer"><span class="testimonial__author">— ${t.author}</span></footer>`;
+                        grid.appendChild(bq);
+                    });
+                }
+            }
+        })
+        .catch(() => {}); // silently fall back to static HTML
+
     // ── Portfolio projects: load from API ──────────────────────────────
     const projectsList = document.querySelector('.projects__list');
     if (projectsList) {
