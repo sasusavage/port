@@ -11,9 +11,8 @@ def get_db():
     url = os.getenv('DATABASE_URL')
     if not url:
         raise RuntimeError('DATABASE_URL environment variable is not set')
-    # Coolify-hosted Postgres requires SSL
     if 'sslmode' not in url:
-        url += ('&' if '?' in url else '?') + 'sslmode=require'
+        url += ('&' if '?' in url else '?') + 'sslmode=disable'
     conn = psycopg2.connect(url)
     conn.autocommit = False
     return conn
