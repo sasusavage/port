@@ -110,7 +110,7 @@
 <body>
     <div id="preloader" class="preloader" aria-hidden="true">
         <div class="preloader__inner">
-            <span class="preloader__logo">Wellcome!</span>
+            <span class="preloader__logo">Welcome!</span>
             <span class="preloader__pulse" aria-hidden="true"></span>
             <p class="preloader__label">Loading experience</p>
         </div>
@@ -129,6 +129,7 @@
                 <li><a href="#capabilities"><i class="bx bx-cog"></i> <span>Capabilities</span></a></li>
                 <li><a href="#resume"><i class="bx bx-file-blank"></i> <span>Resume</span></a></li>
                 <li><a href="#portfolio"><i class="bx bx-book-content"></i> <span>Portfolio</span></a></li>
+                <li><a href="#github"><i class="bx bxl-github"></i> <span>GitHub</span></a></li>
                 <li><a href="#contact"><i class="bx bx-envelope"></i> <span>Contact</span></a></li>
             </ul>
         </nav><!-- .nav-menu -->
@@ -148,6 +149,21 @@
                 <div class="hero__cta button-group button-group--even">
                     <a class="button button--primary" href="#portfolio">View selected work</a>
                     <a class="button button--ghost" href="#contact">Start a conversation</a>
+                    <a class="button button--outline" href="assets/cv.pdf" download aria-label="Download CV">Download CV ↓</a>
+                </div>
+                <div class="hero__stats" aria-label="Quick stats">
+                    <div class="hero__stat">
+                        <span class="hero__stat-num">3+</span>
+                        <span class="hero__stat-label">Years coding</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-num">10+</span>
+                        <span class="hero__stat-label">Projects built</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-num" id="gh-repo-count">—</span>
+                        <span class="hero__stat-label">GitHub repos</span>
+                    </div>
                 </div>
             </div>
             <div class="hero__visual" aria-hidden="true">
@@ -278,24 +294,23 @@
                 </div>
             </div>
             <h3 class="resume__heading">Skills</h3>
-            <div class="skills__list" data-animate="grow">
+            <div class="skills__list" id="skills-list">
                 <article class="skill">
                     <div class="skill__header">
                         <span class="skill__name">Python</span>
                         <span class="skill__value">95%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 95%;"></span>
+                        <span class="skill__bar-fill" data-width="95%"></span>
                     </div>
                 </article>
                 <article class="skill">
                     <div class="skill__header">
                         <span class="skill__name">JavaScript</span>
                         <span class="skill__value">90%</span>
-
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 90%;"></span>
+                        <span class="skill__bar-fill" data-width="90%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -304,7 +319,7 @@
                         <span class="skill__value">82%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 82%;"></span>
+                        <span class="skill__bar-fill" data-width="82%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -313,7 +328,7 @@
                         <span class="skill__value">80%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 80%;"></span>
+                        <span class="skill__bar-fill" data-width="80%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -322,7 +337,7 @@
                         <span class="skill__value">84%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 84%;"></span>
+                        <span class="skill__bar-fill" data-width="84%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -331,7 +346,7 @@
                         <span class="skill__value">88%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 88%;"></span>
+                        <span class="skill__bar-fill" data-width="88%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -340,7 +355,7 @@
                         <span class="skill__value">93%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 93%;"></span>
+                        <span class="skill__bar-fill" data-width="93%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -349,7 +364,7 @@
                         <span class="skill__value">92%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 92%;"></span>
+                        <span class="skill__bar-fill" data-width="92%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -358,7 +373,7 @@
                         <span class="skill__value">87%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="87" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 87%;"></span>
+                        <span class="skill__bar-fill" data-width="87%"></span>
                     </div>
                 </article>
                 <article class="skill">
@@ -367,7 +382,7 @@
                         <span class="skill__value">85%</span>
                     </div>
                     <div class="skill__bar" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">
-                        <span class="skill__bar-fill" style="width: 85%;"></span>
+                        <span class="skill__bar-fill" data-width="85%"></span>
                     </div>
                 </article>
             </div>
@@ -379,36 +394,94 @@
                 <h2 class="section__title">Signature engagements.</h2>
             </div>
             <div class="projects__list">
-                <!-- Project card with image + optional link -->
                 <article class="project project--image" data-animate="reveal">
-                    <a class="project__link-block" href="https://stephanies-closet.sasulabs.me" target="_blank" rel="noopener" aria-label="Open Project 1">
-                        <img class="project__thumb" src="assets/images/p2.png" alt="Project 1 title" />
+                    <a class="project__link-block" href="https://stephanies-closet.sasulabs.me" target="_blank" rel="noopener" aria-label="Open Stephanie's Closet">
+                        <img class="project__thumb" src="assets/images/p2.png" alt="Stephanie's Closet — online fashion store" />
                         <div class="project__overlay">
-                            <h3 class="project__title">Store</h3>
+                            <h3 class="project__title">Stephanie's Closet</h3>
+                            <p class="project__desc">A full-featured online fashion store with product listings, cart, and checkout flow.</p>
+                            <ul class="project__tags">
+                                <li>Python</li><li>Flask</li><li>JavaScript</li>
+                            </ul>
                             <span class="project__open">View ↗</span>
                         </div>
                     </a>
                 </article>
 
                 <article class="project project--image" data-animate="reveal">
-                    <a class="project__link-block" href="https://assistant.sasulabs.me" target="_blank" rel="noopener" aria-label="Open Project 2">
-                        <img class="project__thumb" src="assets/images/p1.png" alt="Project 2 title" />
+                    <a class="project__link-block" href="https://assistant.sasulabs.me" target="_blank" rel="noopener" aria-label="Open Booking Assistant">
+                        <img class="project__thumb" src="assets/images/p1.png" alt="Booking Assistant — smart scheduling app" />
                         <div class="project__overlay">
-                            <h3 class="project__title">Booking</h3>
+                            <h3 class="project__title">Booking Assistant</h3>
+                            <p class="project__desc">A smart scheduling and appointment booking system with real-time availability.</p>
+                            <ul class="project__tags">
+                                <li>Flask</li><li>SQL</li><li>REST API</li>
+                            </ul>
                             <span class="project__open">View ↗</span>
                         </div>
                     </a>
                 </article>
 
                 <article class="project project--image" data-animate="reveal">
-                    <a class="project__link-block" href="https://assistant.sasulabs.me" target="_blank" rel="noopener" aria-label="Open Project 3">
-                        <img class="project__thumb" src="assets/images/image.png" alt="Project 3 title" />
+                    <a class="project__link-block" href="https://assistant.sasulabs.me" target="_blank" rel="noopener" aria-label="Open SourceScout AI">
+                        <img class="project__thumb" src="assets/images/image.png" alt="SourceScout — AI academic research assistant" />
                         <div class="project__overlay">
-                            <h3 class="project__title">AI</h3>
+                            <h3 class="project__title">SourceScout AI</h3>
+                            <p class="project__desc">AI-powered research assistant that helps students discover academic sources and learn with confidence.</p>
+                            <ul class="project__tags">
+                                <li>Python</li><li>AI/LLM</li><li>Flask</li>
+                            </ul>
                             <span class="project__open">View ↗</span>
                         </div>
                     </a>
                 </article>
+            </div>
+        </section>
+
+        <!-- ======= GitHub Repos ======= -->
+        <section id="github" class="panel github-repos" data-animate="fade-up">
+            <div class="section__header">
+                <p class="section__eyebrow">Open Source</p>
+                <h2 class="section__title">Code in the wild.</h2>
+            </div>
+            <p class="section__sub">Live from my GitHub — updated automatically.</p>
+            <div class="repos__grid" id="repos-grid" aria-live="polite">
+                <div class="repos__loading" id="repos-loading">
+                    <span class="repos__spinner"></span> Fetching repositories…
+                </div>
+            </div>
+            <div class="repos__footer">
+                <a class="button button--ghost" href="https://github.com/sasusavage" target="_blank" rel="noopener">
+                    <i class='bx bxl-github'></i> View all on GitHub ↗
+                </a>
+            </div>
+        </section>
+
+        <!-- ======= Testimonials ======= -->
+        <section id="testimonials" class="panel testimonials" data-animate="fade-up">
+            <div class="section__header">
+                <p class="section__eyebrow">Testimonials</p>
+                <h2 class="section__title">What people say.</h2>
+            </div>
+            <div class="testimonials__grid">
+                <blockquote class="testimonial" data-animate="fade-in">
+                    <p>"Sasu delivered our backend integrations on time with clean, well-documented code. A reliable developer who communicates well throughout the process."</p>
+                    <footer class="testimonial__footer">
+                        <span class="testimonial__author">— Colleague, Presto Solutions Ghana</span>
+                    </footer>
+                </blockquote>
+                <blockquote class="testimonial" data-animate="fade-in">
+                    <p>"Working with Sasu felt effortless. He understood our vision quickly and turned it into a polished product. Will absolutely collaborate again."</p>
+                    <footer class="testimonial__footer">
+                        <span class="testimonial__author">— Freelance Client, Ghana</span>
+                    </footer>
+                </blockquote>
+                <blockquote class="testimonial" data-animate="fade-in">
+                    <p>"SourceScout changed how I do research for assignments. The interface is clean and the AI suggestions are genuinely helpful."</p>
+                    <footer class="testimonial__footer">
+                        <span class="testimonial__author">— Student, Valley View University</span>
+                    </footer>
+                </blockquote>
             </div>
         </section>
 
@@ -531,7 +604,18 @@
     <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
 
     <footer class="footer" data-animate="fade-up">
-        <p>© <span id="year">2025</span> Sasu Isaac Osafo. Built with empathy and precision.</p>
+        <div class="footer__inner">
+            <p class="footer__brand">Sasu Isaac Osafo <span class="footer__handle">@snrvibecoder</span></p>
+            <ul class="footer__socials" aria-label="Social links">
+                <li><a href="https://github.com/sasusavage" target="_blank" rel="noopener" aria-label="GitHub"><i class='bx bxl-github'></i></a></li>
+                <li><a href="https://www.linkedin.com/in/isaac-sasu-56787133a" target="_blank" rel="noopener" aria-label="LinkedIn"><i class='bx bxl-linkedin'></i></a></li>
+                <li><a href="https://x.com/sasu_savagee" target="_blank" rel="noopener" aria-label="Twitter / X"><i class='bx bxl-twitter'></i></a></li>
+                <li><a href="https://www.instagram.com/i.o.sasu" target="_blank" rel="noopener" aria-label="Instagram"><i class='bx bxl-instagram'></i></a></li>
+                <li><a href="https://www.tiktok.com/@snrvibecoder" target="_blank" rel="noopener" aria-label="TikTok"><i class='bx bxl-tiktok'></i></a></li>
+                <li><a href="mailto:sasuisaac332@gmail.com" aria-label="Email"><i class='bx bx-envelope'></i></a></li>
+            </ul>
+            <p class="footer__copy">© <span id="year">2025</span> Sasu Isaac Osafo. Built with empathy and precision.</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12" defer></script>

@@ -294,6 +294,98 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('is-loaded');
     }
 
+    // ── Skill bars: animate on scroll ──────────────────────────────────
+    const skillsList = document.getElementById('skills-list');
+    if (skillsList && !prefersReducedMotion) {
+        const skillFills = skillsList.querySelectorAll('.skill__bar-fill[data-width]');
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    skillFills.forEach((fill) => {
+                        fill.style.width = fill.dataset.width;
+                        fill.classList.add('is-animated');
+                    });
+                    skillObserver.disconnect();
+                }
+            });
+        }, { threshold: 0.2 });
+        skillObserver.observe(skillsList);
+    } else if (skillsList) {
+        skillsList.querySelectorAll('.skill__bar-fill[data-width]').forEach((fill) => {
+            fill.style.width = fill.dataset.width;
+        });
+    }
+
+    // ── GitHub repos: live fetch ────────────────────────────────────────
+    const reposGrid = document.getElementById('repos-grid');
+    const reposLoading = document.getElementById('repos-loading');
+    const ghRepoCount = document.getElementById('gh-repo-count');
+    const GITHUB_USER = 'sasusavage';
+
+    const LANG_COLORS = {
+        Python: '#3572A5', JavaScript: '#f1e05a', TypeScript: '#2b7489',
+        HTML: '#e34c26', CSS: '#563d7c', 'C++': '#f34b7d', 'C#': '#178600',
+        Java: '#b07219', Shell: '#89e051', Go: '#00ADD8', Rust: '#dea584',
+    };
+
+    const timeAgo = (dateStr) => {
+        const diff = Date.now() - new Date(dateStr).getTime();
+        const days = Math.floor(diff / 86400000);
+        if (days === 0) return 'today';
+        if (days === 1) return '1 day ago';
+        if (days < 30) return `${days} days ago`;
+        if (days < 365) return `${Math.floor(days / 30)} mo ago`;
+        return `${Math.floor(days / 365)}y ago`;
+    };
+
+    if (reposGrid) {
+        fetch(`https://api.github.com/users/${GITHUB_USER}/repos?sort=pushed&per_page=100&type=public`)
+            .then((r) => r.json())
+            .then((repos) => {
+                if (!Array.isArray(repos)) throw new Error('Unexpected response');
+                const filtered = repos.filter((r) => !r.fork).slice(0, 6);
+
+                if (ghRepoCount) {
+                    const total = repos.filter((r) => !r.fork).length;
+                    ghRepoCount.textContent = total + '+';
+                }
+
+                if (reposLoading) reposLoading.remove();
+
+                if (filtered.length === 0) {
+                    reposGrid.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:.9rem;">No public repositories found.</p>';
+                    return;
+                }
+
+                filtered.forEach((repo) => {
+                    const color = LANG_COLORS[repo.language] || '#8b949e';
+                    const card = document.createElement('a');
+                    card.className = 'repo-card';
+                    card.href = repo.html_url;
+                    card.target = '_blank';
+                    card.rel = 'noopener';
+                    card.setAttribute('aria-label', `GitHub repo: ${repo.name}`);
+                    card.innerHTML = `
+                        <div class="repo-card__name">
+                            <i class='bx bx-git-repo-forked'></i>
+                            ${repo.name}
+                        </div>
+                        <p class="repo-card__desc">${repo.description || 'No description provided.'}</p>
+                        <div class="repo-card__meta">
+                            ${repo.language ? `<span><span class="repo-card__lang-dot" style="background:${color}"></span>${repo.language}</span>` : ''}
+                            <span><i class='bx bx-star'></i> ${repo.stargazers_count}</span>
+                            <span><i class='bx bx-git-branch'></i> ${repo.forks_count}</span>
+                            <span>Updated ${timeAgo(repo.pushed_at)}</span>
+                        </div>`;
+                    reposGrid.appendChild(card);
+                });
+            })
+            .catch(() => {
+                if (reposLoading) reposLoading.remove();
+                reposGrid.innerHTML = '<p class="repos__error">Could not load repositories. <a href="https://github.com/sasusavage" target="_blank" rel="noopener" style="color:rgba(100,160,255,0.8)">View on GitHub ↗</a></p>';
+            });
+    }
+
     // Contact form: send to backend API (Telegram)
     const contactForm = document.getElementById('contact-form');
     // Use relative URL so frontend and backend work together on the same domain
