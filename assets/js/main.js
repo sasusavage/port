@@ -294,6 +294,49 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('is-loaded');
     }
 
+    // ── Portfolio projects: load from API ──────────────────────────────
+    const projectsList = document.querySelector('.projects__list');
+    if (projectsList) {
+        fetch('/api/projects')
+            .then(r => r.json())
+            .then(projects => {
+                if (!Array.isArray(projects) || projects.length === 0) return; // keep static HTML fallback
+                projectsList.innerHTML = '';
+                projects.forEach(p => {
+                    const tagsHtml = (p.tags || []).map(t => `<li>${t}</li>`).join('');
+                    const article = document.createElement('article');
+                    article.className = 'project project--image';
+                    article.setAttribute('data-animate', 'reveal');
+                    article.innerHTML = `
+                        <a class="project__link-block" href="${p.project_url || '#'}" target="_blank" rel="noopener" aria-label="Open ${p.title}">
+                            <img class="project__thumb" src="${p.image_url || ''}" alt="${p.title}" />
+                            <div class="project__overlay">
+                                <h3 class="project__title">${p.title}</h3>
+                                ${p.description ? `<p class="project__desc">${p.description}</p>` : ''}
+                                ${tagsHtml ? `<ul class="project__tags">${tagsHtml}</ul>` : ''}
+                                <span class="project__open">View ↗</span>
+                            </div>
+                        </a>`;
+                    projectsList.appendChild(article);
+                    // Re-observe new elements for scroll animation
+                    if (!prefersReducedMotion) {
+                        const revealObs = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('is-visible');
+                                    revealObs.unobserve(entry.target);
+                                }
+                            });
+                        }, { threshold: 0.15 });
+                        revealObs.observe(article);
+                    } else {
+                        article.classList.add('is-visible');
+                    }
+                });
+            })
+            .catch(() => {}); // silently keep static HTML if API fails
+    }
+
     // ── Skill bars: animate on scroll ──────────────────────────────────
     const skillsList = document.getElementById('skills-list');
     if (skillsList && !prefersReducedMotion) {

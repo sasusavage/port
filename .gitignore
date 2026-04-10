@@ -1,0 +1,7 @@
+portfolio.db
+assets/images/uploads/
+backend/.env
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
