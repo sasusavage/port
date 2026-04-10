@@ -7,11 +7,11 @@ import psycopg2
 import psycopg2.extras
 from werkzeug.security import generate_password_hash, check_password_hash
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-
 def get_db():
-    conn = psycopg2.connect(DATABASE_URL)
+    url = os.getenv('DATABASE_URL')
+    if not url:
+        raise RuntimeError('DATABASE_URL environment variable is not set')
+    conn = psycopg2.connect(url)
     conn.autocommit = False
     return conn
 
