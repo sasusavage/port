@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(() => {
                 if (reposLoading) reposLoading.remove();
-                reposGrid.innerHTML = '<p class="repos__error">Could not load repositories. <a href="https://github.com/sasusavage" target="_blank" rel="noopener" style="color:rgba(100,160,255,0.8)">View on GitHub ↗</a></p>';
+                reposGrid.innerHTML = '<p class="repos__error">Could not load repositories. <a href="https://github.com/sasusavage" target="_blank" rel="noopener" style="color:#3b7eff">View on GitHub ↗</a></p>';
             });
     }
 
