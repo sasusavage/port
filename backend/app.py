@@ -83,6 +83,10 @@ def uploaded_file(filename):
     """Serve uploaded images from persistent storage."""
     return send_from_directory(UPLOADS_DIR, filename)
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(ASSETS_DIR, 'favicon'), 'favicon.ico')
+
 @app.route('/sitemap.xml')
 def sitemap():
     return send_from_directory(BASE_DIR, 'sitemap.xml', mimetype='application/xml')
