@@ -849,9 +849,13 @@ main {
 }
 
 .contact__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.contact__grid .contact__card {
+    width: 100%;
+    max-width: 560px;
 }
 
 .contact__card {
