@@ -229,31 +229,31 @@ document.addEventListener('DOMContentLoaded', () => {
         marqueeTrack.style.animation = 'none';
     }
 
-    // Typed.js init — called after API content loads (or falls back to HTML attr)
+    // Typed.js init - called after API content loads (or falls back to HTML attr)
     const initTyped = (phrases) => {
         if (!typedElement) return;
         if (window._typedInstance) { window._typedInstance.destroy(); window._typedInstance = null; }
         if (!phrases || !phrases.length) return;
-        typedElement.textContent = ‘’;
+        typedElement.textContent = '';
         if (window.Typed) {
-            window._typedInstance = new Typed(‘.typed’, {
+            window._typedInstance = new Typed('.typed', {
                 strings: phrases, typeSpeed: 100, backSpeed: 50,
-                backDelay: 1500, loop: true, smartBackspace: true, cursorChar: ‘|’
+                backDelay: 1500, loop: true, smartBackspace: true, cursorChar: '|'
             });
         } else {
             typedElement.textContent = phrases[0];
         }
     };
 
-    // Skill bar animation — called after skills are rendered into DOM
+    // Skill bar animation - called after skills are rendered into DOM
     const animateSkillBars = () => {
-        const skillsList = document.getElementById(‘skills-list’);
+        const skillsList = document.getElementById('skills-list');
         if (!skillsList) return;
         if (prefersReducedMotion) {
-            skillsList.querySelectorAll(‘.skill__bar-fill[data-width]’).forEach(f => f.style.width = f.dataset.width);
+            skillsList.querySelectorAll('.skill__bar-fill[data-width]').forEach(f => f.style.width = f.dataset.width);
             return;
         }
-        const fills = skillsList.querySelectorAll(‘.skill__bar-fill[data-width]’);
+        const fills = skillsList.querySelectorAll('.skill__bar-fill[data-width]');
         if (!fills.length) return;
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -268,12 +268,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Observe dynamically added elements for scroll animations
     const observeNew = (elements) => {
-        if (prefersReducedMotion) { elements.forEach(el => el.classList.add(‘is-visible’)); return; }
+        if (prefersReducedMotion) { elements.forEach(el => el.classList.add('is-visible')); return; }
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) { entry.target.classList.add(‘is-visible’); obs.unobserve(entry.target); }
+                if (entry.isIntersecting) { entry.target.classList.add('is-visible'); obs.unobserve(entry.target); }
             });
-        }, { threshold: 0.15, rootMargin: ‘0px 0px -8% 0px’ });
+        }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
         elements.forEach(el => obs.observe(el));
     };
 
@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Typed items — use API data, init once
+            // Typed items - use API data, init once
             initTyped(h.typed_items && h.typed_items.length ? h.typed_items : null);
 
             // Stats bar
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </li>`).join('');
             }
 
-            // Skills — render then animate
+            // Skills - render then animate
             const skillsList = document.getElementById('skills-list');
             if (skillsList && Array.isArray(r.skills) && r.skills.length) {
                 skillsList.innerHTML = r.skills.map(sk => `
@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const newItems = content.testimonials.map(t => {
                         const bq = document.createElement('blockquote');
                         bq.className = 'testimonial';
-                        bq.innerHTML = `<p>${t.quote}</p><footer class="testimonial__footer"><span class="testimonial__author">— ${t.author}</span></footer>`;
+                        bq.innerHTML = `<p>${t.quote}</p><footer class="testimonial__footer"><span class="testimonial__author">- ${t.author}</span></footer>`;
                         grid.appendChild(bq);
                         return bq;
                     });
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
         .catch(() => {
-            // API failed — fall back to HTML typed items
+            // API failed - fall back to HTML typed items
             const fallbackItems = typedElement
                 ? (typedElement.dataset.typedItems || '').split(',').map(s => s.trim()).filter(Boolean)
                 : [];
