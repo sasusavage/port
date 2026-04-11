@@ -229,50 +229,53 @@ document.addEventListener('DOMContentLoaded', () => {
         marqueeTrack.style.animation = 'none';
     }
 
-    if (typedElement) {
-        const itemsAttr = typedElement.dataset.typedItems || '';
-        const marker = "I'm a product designer";
-        let phrases = [];
-
-        if (itemsAttr) {
-            const markerIndex = itemsAttr.toLowerCase().indexOf(marker.toLowerCase());
-
-            if (markerIndex >= 0) {
-                const leadingPart = itemsAttr.slice(0, markerIndex);
-                const trailingPart = itemsAttr.slice(markerIndex);
-
-                phrases = leadingPart.split(',').map((entry) => entry.trim()).filter(Boolean);
-                phrases.push(trailingPart.trim());
-            } else {
-                phrases = itemsAttr.split(',').map((entry) => entry.trim()).filter(Boolean);
-            }
+    // Typed.js init — called after API content loads (or falls back to HTML attr)
+    const initTyped = (phrases) => {
+        if (!typedElement) return;
+        if (window._typedInstance) { window._typedInstance.destroy(); window._typedInstance = null; }
+        if (!phrases || !phrases.length) return;
+        typedElement.textContent = ‘’;
+        if (window.Typed) {
+            window._typedInstance = new Typed(‘.typed’, {
+                strings: phrases, typeSpeed: 100, backSpeed: 50,
+                backDelay: 1500, loop: true, smartBackspace: true, cursorChar: ‘|’
+            });
+        } else {
+            typedElement.textContent = phrases[0];
         }
+    };
 
-        const sanitizedPhrases = phrases.map((phrase) => {
-            if (/^I['’]m a\s+/i.test(phrase)) {
-                return phrase.replace(/^I['’]m a\s+/i, '').trim();
-            }
-            return phrase;
-        }).filter(Boolean);
-
-        if (sanitizedPhrases.length) {
-            typedElement.textContent = '';
-
-            if (window.Typed) {
-                new Typed('.typed', {
-                    strings: sanitizedPhrases,
-                    typeSpeed: 100,
-                    backSpeed: 50,
-                    backDelay: 1500,
-                    loop: true,
-                    smartBackspace: true,
-                    cursorChar: '|'
-                });
-            } else {
-                typedElement.textContent = sanitizedPhrases[0];
-            }
+    // Skill bar animation — called after skills are rendered into DOM
+    const animateSkillBars = () => {
+        const skillsList = document.getElementById(‘skills-list’);
+        if (!skillsList) return;
+        if (prefersReducedMotion) {
+            skillsList.querySelectorAll(‘.skill__bar-fill[data-width]’).forEach(f => f.style.width = f.dataset.width);
+            return;
         }
-    }
+        const fills = skillsList.querySelectorAll(‘.skill__bar-fill[data-width]’);
+        if (!fills.length) return;
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    fills.forEach(f => { f.style.width = f.dataset.width; });
+                    obs.disconnect();
+                }
+            });
+        }, { threshold: 0.2 });
+        obs.observe(skillsList);
+    };
+
+    // Observe dynamically added elements for scroll animations
+    const observeNew = (elements) => {
+        if (prefersReducedMotion) { elements.forEach(el => el.classList.add(‘is-visible’)); return; }
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { entry.target.classList.add(‘is-visible’); obs.unobserve(entry.target); }
+            });
+        }, { threshold: 0.15, rootMargin: ‘0px 0px -8% 0px’ });
+        elements.forEach(el => obs.observe(el));
+    };
 
     if (preloader) {
         window.addEventListener('load', () => {
@@ -298,35 +301,43 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/content')
         .then(r => r.json())
         .then(content => {
-            // Hero
-            const h = content.hero;
-            if (h) {
-                const nameEl = document.querySelector('.hero__name');
-                if (nameEl && h.name) nameEl.textContent = h.name;
-                const eyebrowEl = document.querySelector('.hero__eyebrow');
-                if (eyebrowEl && h.eyebrow) eyebrowEl.textContent = h.eyebrow;
-                const titleEl = document.querySelector('.hero__title');
-                if (titleEl && h.title) {
-                    // preserve accent span
-                    const accent = titleEl.querySelector('.hero__title--accent');
-                    if (!accent) titleEl.textContent = h.title;
+
+            // ── Hero ──────────────────────────────────────────────────
+            const h = content.hero || {};
+            const nameEl = document.querySelector('.hero__name');
+            if (nameEl && h.name) nameEl.textContent = h.name;
+
+            const eyebrowEl = document.querySelector('.hero__eyebrow');
+            if (eyebrowEl && h.eyebrow) eyebrowEl.textContent = h.eyebrow;
+
+            // Title: rebuild keeping the accent word styled
+            const titleEl = document.querySelector('.hero__title');
+            if (titleEl && h.title) {
+                const accentWord = titleEl.querySelector('.hero__title--accent');
+                if (accentWord) {
+                    // Replace text around the accent span
+                    const parts = h.title.split(accentWord.textContent);
+                    if (parts.length === 2) {
+                        titleEl.innerHTML = `${parts[0]}<span class="hero__title--accent">${accentWord.textContent}</span>${parts[1]}`;
+                    } else {
+                        titleEl.textContent = h.title;
+                    }
+                } else {
+                    titleEl.textContent = h.title;
                 }
-                const typedEl = document.querySelector('.typed');
-                if (typedEl && h.typed_items && window.Typed) {
-                    if (window._typedInstance) window._typedInstance.destroy();
-                    window._typedInstance = new Typed('.typed', {
-                        strings: h.typed_items, typeSpeed: 100, backSpeed: 50,
-                        backDelay: 1500, loop: true, smartBackspace: true, cursorChar: '|'
-                    });
-                }
-                if (h.stats) {
-                    const statNums = document.querySelectorAll('.hero__stat-num');
-                    const statLabels = document.querySelectorAll('.hero__stat-label');
-                    h.stats.forEach((s, i) => {
-                        if (statNums[i]) statNums[i].textContent = s.num;
-                        if (statLabels[i]) statLabels[i].textContent = s.label;
-                    });
-                }
+            }
+
+            // Typed items — use API data, init once
+            initTyped(h.typed_items && h.typed_items.length ? h.typed_items : null);
+
+            // Stats bar
+            if (Array.isArray(h.stats)) {
+                const statNums   = document.querySelectorAll('.hero__stat-num');
+                const statLabels = document.querySelectorAll('.hero__stat-label');
+                h.stats.forEach((s, i) => {
+                    if (statNums[i])   statNums[i].textContent   = s.num;
+                    if (statLabels[i]) statLabels[i].textContent = s.label;
+                });
             }
 
             // CV button
@@ -335,76 +346,100 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cvBtn) cvBtn.href = content.cv_url;
             }
 
-            // About
-            const a = content.about;
-            if (a) {
-                const stmts = document.querySelectorAll('.about__statement p');
-                if (a.bio) a.bio.forEach((text, i) => { if (stmts[i]) stmts[i].textContent = text; });
-                const photo = document.querySelector('.about__avatar');
-                if (photo && a.photo_url) photo.src = a.photo_url;
-                const caption = document.querySelector('.about__avatar-caption');
-                if (caption && a.caption) caption.textContent = a.caption;
-            }
+            // ── About ─────────────────────────────────────────────────
+            const a = content.about || {};
+            const stmts = document.querySelectorAll('.about__statement p');
+            if (a.bio) a.bio.forEach((text, i) => { if (stmts[i]) stmts[i].textContent = text; });
+            const photo = document.querySelector('.about__avatar');
+            if (photo && a.photo_url) photo.src = a.photo_url;
+            const caption = document.querySelector('.about__avatar-caption');
+            if (caption && a.caption) caption.textContent = a.caption;
 
-            // Capabilities
+            // ── Capabilities ──────────────────────────────────────────
             if (Array.isArray(content.capabilities)) {
                 const cards = document.querySelectorAll('.capability');
                 content.capabilities.forEach((cap, i) => {
-                    const card = cards[i];
-                    if (!card) return;
-                    const h3 = card.querySelector('h3');
-                    const p  = card.querySelector('p');
+                    const card = cards[i]; if (!card) return;
+                    const h3  = card.querySelector('h3');
+                    const p   = card.querySelector('p');
                     const lis = card.querySelectorAll('li');
                     if (h3) h3.textContent = cap.title;
                     if (p)  p.textContent  = cap.desc;
-                    if (cap.items) cap.items.forEach((item, j) => { if (lis[j]) lis[j].textContent = item; });
+                    (cap.items || []).forEach((item, j) => { if (lis[j]) lis[j].textContent = item; });
                 });
             }
 
-            // Resume
-            const r = content.resume;
-            if (r) {
-                const summaryEl = document.querySelector('.resume__grid p');
-                if (summaryEl && r.summary) summaryEl.textContent = r.summary;
-                const metaItems = document.querySelectorAll('.resume__meta li');
-                if (metaItems[0] && r.location) metaItems[0].innerHTML = `<strong>Location:</strong> ${r.location}`;
-                if (metaItems[1] && r.email)    metaItems[1].innerHTML = `<strong>Email:</strong> <a href="mailto:${r.email}">${r.email}</a>`;
+            // ── Resume ────────────────────────────────────────────────
+            const r = content.resume || {};
+            const summaryEl = document.querySelector('.resume__grid p');
+            if (summaryEl && r.summary) summaryEl.textContent = r.summary;
 
-                const skillsList = document.getElementById('skills-list');
-                if (skillsList && r.skills) {
-                    skillsList.innerHTML = '';
-                    r.skills.forEach(sk => {
-                        const art = document.createElement('article');
-                        art.className = 'skill';
-                        art.innerHTML = `
-                            <div class="skill__header">
-                                <span class="skill__name">${sk.name}</span>
-                                <span class="skill__value">${sk.value}%</span>
-                            </div>
-                            <div class="skill__bar" role="progressbar" aria-valuenow="${sk.value}" aria-valuemin="0" aria-valuemax="100">
-                                <span class="skill__bar-fill" data-width="${sk.value}%"></span>
-                            </div>`;
-                        skillsList.appendChild(art);
-                    });
-                }
+            const metaItems = document.querySelectorAll('.resume__meta li');
+            if (metaItems[0] && r.location) metaItems[0].innerHTML = `<strong>Location:</strong> ${r.location}`;
+            if (metaItems[1] && r.email)    metaItems[1].innerHTML = `<strong>Email:</strong> <a href="mailto:${r.email}">${r.email}</a>`;
+
+            // Education
+            const eduList = document.querySelector('#resume .about__timeline:nth-of-type(1)');
+            if (eduList && Array.isArray(r.education)) {
+                eduList.innerHTML = r.education.map(e => `
+                    <li>
+                        <span class="about__timeline-year">${e.year}</span>
+                        <div class="about__timeline-role">${e.role}</div>
+                        ${e.note ? `<p class="resume__note">${e.note}</p>` : ''}
+                    </li>`).join('');
             }
 
-            // Testimonials
-            if (Array.isArray(content.testimonials)) {
+            // Experience
+            const expList = document.querySelector('#resume .about__timeline:nth-of-type(2)');
+            if (expList && Array.isArray(r.experience)) {
+                expList.innerHTML = r.experience.map(e => `
+                    <li>
+                        <span class="about__timeline-year">${e.year}</span>
+                        <div class="about__timeline-role">${e.role}${e.url ? ` · <a href="${e.url}" target="_blank" rel="noopener">${e.url.replace(/https?:\/\//,'')}</a>` : ''}</div>
+                        ${e.note ? `<p class="resume__note">${e.note}</p>` : ''}
+                    </li>`).join('');
+            }
+
+            // Skills — render then animate
+            const skillsList = document.getElementById('skills-list');
+            if (skillsList && Array.isArray(r.skills) && r.skills.length) {
+                skillsList.innerHTML = r.skills.map(sk => `
+                    <article class="skill">
+                        <div class="skill__header">
+                            <span class="skill__name">${sk.name}</span>
+                            <span class="skill__value">${sk.value}%</span>
+                        </div>
+                        <div class="skill__bar" role="progressbar" aria-valuenow="${sk.value}" aria-valuemin="0" aria-valuemax="100">
+                            <span class="skill__bar-fill" data-width="${sk.value}%"></span>
+                        </div>
+                    </article>`).join('');
+                animateSkillBars(); // set up observer NOW after skills are in DOM
+            }
+
+            // ── Testimonials ──────────────────────────────────────────
+            if (Array.isArray(content.testimonials) && content.testimonials.length) {
                 const grid = document.querySelector('.testimonials__grid');
                 if (grid) {
                     grid.innerHTML = '';
-                    content.testimonials.forEach(t => {
+                    const newItems = content.testimonials.map(t => {
                         const bq = document.createElement('blockquote');
                         bq.className = 'testimonial';
-                        bq.setAttribute('data-animate', 'fade-in');
                         bq.innerHTML = `<p>${t.quote}</p><footer class="testimonial__footer"><span class="testimonial__author">— ${t.author}</span></footer>`;
                         grid.appendChild(bq);
+                        return bq;
                     });
+                    observeNew(newItems); // animate them on scroll
                 }
             }
         })
-        .catch(() => {}); // silently fall back to static HTML
+        .catch(() => {
+            // API failed — fall back to HTML typed items
+            const fallbackItems = typedElement
+                ? (typedElement.dataset.typedItems || '').split(',').map(s => s.trim()).filter(Boolean)
+                : [];
+            initTyped(fallbackItems);
+            animateSkillBars();
+        });
 
     // ── Portfolio projects: load from API ──────────────────────────────
     const projectsList = document.querySelector('.projects__list');
@@ -412,13 +447,12 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('/api/projects')
             .then(r => r.json())
             .then(projects => {
-                if (!Array.isArray(projects) || projects.length === 0) return; // keep static HTML fallback
+                if (!Array.isArray(projects) || projects.length === 0) return;
                 projectsList.innerHTML = '';
-                projects.forEach(p => {
+                const newArticles = projects.map(p => {
                     const tagsHtml = (p.tags || []).map(t => `<li>${t}</li>`).join('');
                     const article = document.createElement('article');
                     article.className = 'project project--image';
-                    article.setAttribute('data-animate', 'reveal');
                     article.innerHTML = `
                         <a class="project__link-block" href="${p.project_url || '#'}" target="_blank" rel="noopener" aria-label="Open ${p.title}">
                             <img class="project__thumb" src="${p.image_url || ''}" alt="${p.title}" />
@@ -430,45 +464,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </a>`;
                     projectsList.appendChild(article);
-                    // Re-observe new elements for scroll animation
-                    if (!prefersReducedMotion) {
-                        const revealObs = new IntersectionObserver((entries) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    entry.target.classList.add('is-visible');
-                                    revealObs.unobserve(entry.target);
-                                }
-                            });
-                        }, { threshold: 0.15 });
-                        revealObs.observe(article);
-                    } else {
-                        article.classList.add('is-visible');
-                    }
+                    return article;
                 });
+                observeNew(newArticles);
             })
-            .catch(() => {}); // silently keep static HTML if API fails
-    }
-
-    // ── Skill bars: animate on scroll ──────────────────────────────────
-    const skillsList = document.getElementById('skills-list');
-    if (skillsList && !prefersReducedMotion) {
-        const skillFills = skillsList.querySelectorAll('.skill__bar-fill[data-width]');
-        const skillObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    skillFills.forEach((fill) => {
-                        fill.style.width = fill.dataset.width;
-                        fill.classList.add('is-animated');
-                    });
-                    skillObserver.disconnect();
-                }
-            });
-        }, { threshold: 0.2 });
-        skillObserver.observe(skillsList);
-    } else if (skillsList) {
-        skillsList.querySelectorAll('.skill__bar-fill[data-width]').forEach((fill) => {
-            fill.style.width = fill.dataset.width;
-        });
+            .catch(() => {});
     }
 
     // ── GitHub repos: live fetch ────────────────────────────────────────
